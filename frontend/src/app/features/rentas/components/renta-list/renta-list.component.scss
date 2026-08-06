@@ -1,0 +1,132 @@
+.container-rentas {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  .header-action {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+
+    h2 {
+      margin: 0;
+      font-weight: 600;
+    }
+
+    .subtitle {
+      color: #6c757d;
+      margin-top: 4px;
+    }
+  }
+
+  .filter-card {
+    margin-bottom: 24px;
+
+    .filter-form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+
+      mat-form-field {
+        flex: 1 1 200px;
+        margin-bottom: -1.25em; // Alineación estilizada de Material
+      }
+
+      .filter-buttons {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+    }
+  }
+
+  .table-card {
+    position: relative;
+    overflow: hidden;
+
+    .spinner-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.7);
+      z-index: 10;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .table-responsive {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+
+      .text-muted {
+        color: #6c757d;
+        font-size: 0.9em;
+      }
+
+      /* Badge para ID o código de Renta */
+      .renta-id-badge {
+        background-color: #f1f3f5;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-family: monospace;
+        font-weight: bold;
+        letter-spacing: 0.5px;
+      }
+
+      /* Resaltado para el Costo Total */
+      .costo-total {
+        font-weight: 600;
+        color: #2b2d42;
+      }
+
+      /* Estilos para Badges de Estado de la Renta */
+      .badge {
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      /* Estado RESERVADA: Tonalidad amarilla / ámbar (Pendiente por iniciar) */
+      .badge-reservada {
+        background-color: #fef7e0;
+        color: #b06000;
+      }
+
+      /* Estado ACTIVA: Tonalidad azul (En curso / Vehículo entregado) */
+      .badge-activa {
+        background-color: #e8f0fe;
+        color: #1a73e8;
+      }
+
+      /* Estado COMPLETADA: Tonalidad verde (Procesada y devuelta con éxito) */
+      .badge-completada {
+        background-color: #e6f4ea;
+        color: #137333;
+      }
+
+      /* Estado CANCELADA: Tonalidad roja */
+      .badge-cancelada {
+        background-color: #fce8e6;
+        color: #c5221f;
+      }
+
+      .empty-table {
+        text-align: center;
+        padding: 32px;
+        color: #6c757d;
+      }
+    }
+  }
+}

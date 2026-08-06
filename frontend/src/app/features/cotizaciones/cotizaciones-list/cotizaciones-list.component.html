@@ -1,0 +1,159 @@
+<div class="container-clientes">
+    <!-- Header con título y botón para ejecutar el cálculo -->
+    <div class="header-action">
+        <div>
+            <h2>Calculadora de Cotizaciones</h2>
+            <p class="subtitle">Calcula tarifas estimadas de renta al instante</p>
+        </div>
+        <button mat-raised-button color="primary" (click)="calcular()">
+            <mat-icon>calculate</mat-icon>
+            Calcular Cotización
+        </button>
+    </div>
+
+    <!-- Tarjeta del Formulario de Cotización -->
+    <mat-card class="filter-card">
+        <mat-card-content>
+            <form [formGroup]="cotizadorForm" (ngSubmit)="calcular()" class="filter-form">
+
+                <!-- Tipo de Selección -->
+                <mat-form-field appearance="outline">
+                    <mat-label>Cotizar Por</mat-label>
+                    <mat-select formControlName="tipoSeleccion">
+                        <mat-option value="categoria">Categoría</mat-option>
+                        <mat-option value="vehiculo">Vehículo Específico</mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <!-- Selección de Categoría (Condicional) -->
+                @if (cotizadorForm.get('tipoSeleccion')?.value === 'categoria') {
+                <mat-form-field appearance="outline">
+                    <mat-label>Categoría</mat-label>
+                    <mat-select formControlName="idCategoria">
+                        @for (cat of categoriasList; track cat.id) {
+                        <mat-option [value]="cat.id">{{ cat.nombre }}</mat-option>
+                        }
+                    </mat-select>
+                </mat-form-field>
+                }
+
+                <!-- Selección de Vehículo (Condicional) -->
+                @if (cotizadorForm.get('tipoSeleccion')?.value === 'vehiculo') {
+                <mat-form-field appearance="outline">
+                    <mat-label>Vehículo</mat-label>
+                    <mat-select formControlName="idVehiculo">
+                        @for (veh of vehiculosList; track veh.id) {
+                        <mat-option [value]="veh.id">{{ veh.marca }} {{ veh.modelo }} ({{ veh.placa }})</mat-option>
+                        }
+                    </mat-select>
+                </mat-form-field>
+                }
+
+                <!-- Datepicker Fecha Inicio -->
+                <mat-form-field appearance="outline">
+                    <mat-label>Fecha Inicio</mat-label>
+                    <input matInput [matDatepicker]="pickerInicio" formControlName="fechaInicio" readonly />
+                    <mat-datepicker-toggle matIconSuffix [for]="pickerInicio"></mat-datepicker-toggle>
+                    <mat-datepicker #pickerInicio></mat-datepicker>
+                </mat-form-field>
+
+                <!-- Datepicker Fecha Fin -->
+                <mat-form-field appearance="outline">
+                    <mat-label>Fecha Fin</mat-label>
+                    <input matInput [matDatepicker]="pickerFin" formControlName="fechaFin" readonly />
+                    <mat-datepicker-toggle matIconSuffix [for]="pickerFin"></mat-datepicker-toggle>
+                    <mat-datepicker #pickerFin></mat-datepicker>
+                </mat-form-field>
+
+                <!-- Checkboxes Opcionales -->
+                <mat-checkbox formControlName="incluyeSeguro" color="primary">Incluir Seguro</mat-checkbox>
+                <mat-checkbox formControlName="conductorAdicional" color="primary">Conductor Adicional</mat-checkbox>
+
+                <!-- Botones de Acción del Formulario -->
+                <div class="filter-buttons">
+                    <button mat-raised-button color="primary" type="submit" [disabled]="isLoading">
+                        <mat-icon>calculate</mat-icon> Cotizar
+                    </button>
+                    <button mat-button type="button" (click)="limpiar()">
+                        <mat-icon>clear</mat-icon> Limpiar
+                    </button>
+                </div>
+            </form>
+        </mat-card-content>
+    </mat-card>
+
+    <!-- Tarjeta de Resultados (Detalle / Tarjeta de Cotización) -->
+    <mat-card class="table-card">
+        <!-- Spinner de Carga -->
+        @if (isLoading) {
+        <div class="spinner-container">
+            <mat-spinner diameter="50"></mat-spinner>
+        </div>
+        }
+
+        <mat-card-content class="resultado-container">
+            @if (resultado) {
+            <div class="cotizacion-detalle-card">
+                <div class="detalle-header">
+                    <h3>Detalle de Cotización</h3>
+                    <span class="licencia-badge">{{ resultado.diasTotales }} día(s) / {{ resultado.horasTotales }}
+                        hora(s)</span>
+                </div>
+
+                <p class="concepto-info"><strong>Concepto:</strong> {{ resultado.vehiculoOcategoriaInfo }}</p>
+
+                <div class="detalle-grid">
+                    <div class="detalle-item">
+                        <span>Tarifa Diaria Base:</span>
+                        <strong>${{ resultado.tarifaDiariaBase | number:'1.2-2' }}</strong>
+                    </div>
+                    <div class="detalle-item">
+                        <span>Subtotal Renta:</span>
+                        <strong>${{ resultado.subtotalRenta | number:'1.2-2' }}</strong>
+                    </div>
+
+                    @if (resultado.costoSeguro > 0) {
+                    <div class="detalle-item">
+                        <span>Costo Seguro:</span>
+                        <span class="text-muted">+${{ resultado.costoSeguro | number:'1.2-2' }}</span>
+                    </div>
+                    }
+
+                    @if (resultado.costoConductorAdicional > 0) {
+                    <div class="detalle-item">
+                        <span>Conductor Adicional:</span>
+                        <span class="text-muted">+${{ resultado.costoConductorAdicional | number:'1.2-2' }}</span>
+                    </div>
+                    }
+
+                    <div class="detalle-item">
+                        <span>Subtotal General:</span>
+                        <strong>${{ resultado.subtotalGeneral | number:'1.2-2' }}</strong>
+                    </div>
+                    <div class="detalle-item">
+                        <span>IVA (16%):</span>
+                        <span class="text-muted">${{ resultado.impuestos | number:'1.2-2' }}</span>
+                    </div>
+                </div>
+
+                <hr class="divider" />
+
+                <div class="detalle-footer">
+                    <div class="total-section">
+                        <span class="total-label">Total Estimado:</span>
+                        <span class="total-monto">${{ resultado.totalEstimado | number:'1.2-2' }}</span>
+                    </div>
+                    <div class="garantia-section">
+                        <span>Depósito en Garantía Sugerido:</span>
+                        <strong>${{ resultado.depositoGarantiaSugerido | number:'1.2-2' }}</strong>
+                    </div>
+                </div>
+            </div>
+            } @else {
+            <div class="empty-table">
+                Selecciona los parámetros y haz clic en "Cotizar" para ver el desglose detallado aquí.
+            </div>
+            }
+        </mat-card-content>
+    </mat-card>
+</div>

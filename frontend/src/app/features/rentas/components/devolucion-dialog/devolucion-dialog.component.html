@@ -1,0 +1,74 @@
+<div class="dialog-title">
+    <h2 mat-dialog-title>Procesar Devolución</h2>
+    <button mat-icon-button class="close-button" (click)="cancelar()" [disabled]="isLoading">
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
+
+<mat-dialog-content>
+    @if (isLoading) {
+    <div class="loading-container">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Procesando devolución...</p>
+    </div>
+    } @else {
+    <!-- Resumen informativo de la renta -->
+    <div class="renta-summary">
+        <div class="summary-item">
+            <span class="label">Vehículo:</span>
+            <span class="value">{{ data.renta.vehiculoDetalle }}</span>
+        </div>
+        <div class="summary-item">
+            <span class="label">Cliente:</span>
+            <span class="value">{{ data.renta.clienteNombre }}</span>
+        </div>
+        <div class="summary-item">
+            <span class="label">Km Inicial:</span>
+            <span class="value font-mono">{{ data.renta.kilometrajeInicial }} km</span>
+        </div>
+    </div>
+
+    <form [formGroup]="devolucionForm" class="dialog-form">
+        <!-- Fila: Fecha y Kilometraje Final -->
+        <div class="form-row">
+            <mat-form-field appearance="outline">
+                <mat-label>Fecha Devolución Real</mat-label>
+                <input matInput [matDatepicker]="pickerDevolucion" formControlName="fechaDevolucionReal"
+                    placeholder="Selecciona fecha" />
+                <mat-datepicker-toggle matSuffix [for]="pickerDevolucion"></mat-datepicker-toggle>
+                <mat-datepicker #pickerDevolucion></mat-datepicker>
+                @if (devolucionForm.get('fechaDevolucionReal')?.hasError('required')) {
+                <mat-error>La fecha es obligatoria</mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Kilometraje Final</mat-label>
+                <input matInput type="number" formControlName="kilometrajeFinal" placeholder="Ej. 15450" />
+                <mat-icon matSuffix>speed</mat-icon>
+
+                @if (devolucionForm.get('kilometrajeFinal')?.hasError('required')) {
+                <mat-error>El kilometraje final es obligatorio</mat-error>
+                }
+                @if (devolucionForm.get('kilometrajeFinal')?.hasError('min')) {
+                <mat-error>No puede ser menor a 0</mat-error>
+                }
+                @if (devolucionForm.get('kilometrajeFinal')?.hasError('kilometrajeMenor')) {
+                <mat-error>
+                    No puede ser menor al inicial ({{ data.renta.kilometrajeInicial }} km)
+                </mat-error>
+                }
+            </mat-form-field>
+        </div>
+    </form>
+    }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button (click)="cancelar()" [disabled]="isLoading">
+        Cancelar
+    </button>
+    <button mat-raised-button color="primary" (click)="guardar()" [disabled]="isLoading">
+        Completar Devolución
+    </button>
+</mat-dialog-actions>

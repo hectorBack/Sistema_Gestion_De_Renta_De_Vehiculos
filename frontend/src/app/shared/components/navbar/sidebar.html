@@ -1,0 +1,51 @@
+<aside class="sidebar-container">
+    <!-- Brand Header / Logo -->
+    <div class="sidebar-header">
+        <div class="brand-logo">
+            <mat-icon class="logo-icon">directions_car</mat-icon>
+            <div class="brand-text">
+                <span class="brand-title">RentCar</span>
+                <span class="brand-subtitle">Control & Gestión</span>
+            </div>
+        </div>
+    </div>
+
+    <mat-divider class="sidebar-divider"></mat-divider>
+
+    <!-- Navegación Principal -->
+    <nav class="sidebar-nav">
+        <div class="nav-section-title">Principal</div>
+        <mat-nav-list class="nav-list">
+            @for (item of mainNavItems; track item.route) {
+            <a mat-list-item [routerLink]="item.route" routerLinkActive="active" class="nav-item">
+                <mat-icon matListItemIcon class="nav-icon">{{ item.icon }}</mat-icon>
+                <span matListItemTitle class="nav-label">{{ item.label }}</span>
+            </a>
+            }
+        </mat-nav-list>
+
+        <div class="nav-section-title mt-16">Gestión</div>
+        <mat-nav-list class="nav-list">
+            @for (item of secondaryNavItems; track item.route) {
+            <a mat-list-item [routerLink]="item.route" routerLinkActive="active" class="nav-item">
+                <mat-icon matListItemIcon class="nav-icon">{{ item.icon }}</mat-icon>
+                <span matListItemTitle class="nav-label">{{ item.label }}</span>
+            </a>
+            }
+        </mat-nav-list>
+    </nav>
+
+    <!-- Footer / Perfil Rápido -->
+    <div class="sidebar-footer">
+        <mat-divider class="sidebar-divider"></mat-divider>
+        <div class="user-profile">
+            <div class="avatar">
+                <mat-icon>person</mat-icon>
+            </div>
+            <div class="user-info">
+                <span class="user-name">Administrador</span>
+                <span class="user-role">Sistema de Flota</span>
+            </div>
+        </div>
+    </div>
+</aside>

@@ -1,0 +1,71 @@
+<div class="dialog-title">
+    <h2 mat-dialog-title>
+        {{ isEditMode ? 'Editar Sucursal' : 'Registrar Nueva Sucursal' }}
+    </h2>
+    <button mat-icon-button class="close-button" (click)="cancelar()" [disabled]="isLoading">
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
+
+<mat-dialog-content>
+    @if (isLoading) {
+    <div class="loading-container">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Procesando información...</p>
+    </div>
+    } @else {
+    <form [formGroup]="sucursalForm" class="dialog-form">
+
+        <!-- Fila 1: Nombre de la Sucursal -->
+        <mat-form-field appearance="outline">
+            <mat-label>Nombre de la Sucursal</mat-label>
+            <input matInput formControlName="nombre" placeholder="Ej. Sucursal Central / Aeropuerto" />
+            @if (sucursalForm.get('nombre')?.hasError('required')) {
+            <mat-error>El nombre es obligatorio</mat-error>
+            }
+        </mat-form-field>
+
+        <!-- Fila 2: Dirección Completa -->
+        <mat-form-field appearance="outline">
+            <mat-label>Dirección</mat-label>
+            <textarea matInput formControlName="direccion" rows="2"
+                placeholder="Ej. Av. Insurgentes Sur 123, Col. Juarez"></textarea>
+            @if (sucursalForm.get('direccion')?.hasError('required')) {
+            <mat-error>La dirección es obligatoria</mat-error>
+            }
+        </mat-form-field>
+
+        <!-- Fila 3: Teléfono y Email -->
+        <div class="form-row">
+            <mat-form-field appearance="outline">
+                <mat-label>Teléfono</mat-label>
+                <input matInput formControlName="telefono" placeholder="Ej. +52 5512345678" />
+                @if (sucursalForm.get('telefono')?.hasError('required')) {
+                <mat-error>El teléfono es obligatorio</mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Correo Electrónico</mat-label>
+                <input matInput formControlName="email" type="email" placeholder="ejemplo@sucursal.com" />
+                @if (sucursalForm.get('email')?.hasError('required')) {
+                <mat-error>El email es obligatorio</mat-error>
+                }
+                @if (sucursalForm.get('email')?.hasError('email')) {
+                <mat-error>Formato de email inválido</mat-error>
+                }
+            </mat-form-field>
+        </div>
+
+    </form>
+    }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button (click)="cancelar()" [disabled]="isLoading">
+        Cancelar
+    </button>
+    <button mat-raised-button color="primary" (click)="guardar()" [disabled]="isLoading">
+        {{ isEditMode ? 'Actualizar' : 'Registrar' }}
+    </button>
+</mat-dialog-actions>

@@ -1,0 +1,162 @@
+<div class="container-clientes">
+    <!-- Header con título y botón principal -->
+    <div class="header-action">
+        <div>
+            <h2>Gestión de Clientes</h2>
+            <p class="subtitle">Consulta, inscribe y gestiona la información de tus clientes</p>
+        </div>
+        <button mat-raised-button color="primary" (click)="abrirDialogoCrear()">
+            <mat-icon>add</mat-icon>
+            Nuevo Cliente
+        </button>
+    </div>
+
+    <!-- Tarjeta de Filtros -->
+    <mat-card class="filter-card">
+        <mat-card-content>
+            <form [formGroup]="filterForm" (ngSubmit)="aplicarFiltros()" class="filter-form">
+                <!-- Búsqueda General (Término) -->
+                <mat-form-field appearance="outline">
+                    <mat-label>Buscar cliente</mat-label>
+                    <input matInput formControlName="termino" placeholder="Nombre, apellido, email o licencia..." />
+                    <mat-icon matSuffix>search</mat-icon>
+                </mat-form-field>
+
+                <!-- Filtro por Estado -->
+                <mat-form-field appearance="outline">
+                    <mat-label>Estado</mat-label>
+                    <mat-select formControlName="activo">
+                        @for (est of estadosList; track est.label) {
+                        <mat-option [value]="est.value">{{ est.label }}</mat-option>
+                        }
+                    </mat-select>
+                </mat-form-field>
+
+                <!-- Botones de Acción -->
+                <div class="filter-buttons">
+                    <button mat-raised-button color="primary" type="submit">
+                        <mat-icon>filter_list</mat-icon> Filtrar
+                    </button>
+                    <button mat-button type="button" (click)="limpiarFiltros()">
+                        <mat-icon>clear</mat-icon> Limpiar
+                    </button>
+                </div>
+            </form>
+        </mat-card-content>
+    </mat-card>
+
+    <!-- Tarjeta de Tabla -->
+    <mat-card class="table-card">
+        <!-- Spinner de Carga -->
+        @if (isLoading) {
+        <div class="spinner-container">
+            <mat-spinner diameter="50"></mat-spinner>
+        </div>
+        }
+
+        <div class="table-responsive">
+            <table mat-table [dataSource]="clientes" class="mat-elevation-z0">
+                <!-- ID Column -->
+                <ng-container matColumnDef="id">
+                    <th mat-header-cell *matHeaderCellDef> ID </th>
+                    <td mat-cell *matCellDef="let element"> #{{ element.id }} </td>
+                </ng-container>
+
+                <!-- Nombre Completo Column -->
+                <ng-container matColumnDef="nombreCompleto">
+                    <th mat-header-cell *matHeaderCellDef> Cliente </th>
+                    <td mat-cell *matCellDef="let element">
+                        <strong>{{ element.nombreCompleto }}</strong>
+                    </td>
+                </ng-container>
+
+                <!-- Email Column -->
+                <ng-container matColumnDef="email">
+                    <th mat-header-cell *matHeaderCellDef> Email </th>
+                    <td mat-cell *matCellDef="let element" class="text-muted">
+                        {{ element.email }}
+                    </td>
+                </ng-container>
+
+                <!-- Teléfono Column -->
+                <ng-container matColumnDef="telefono">
+                    <th mat-header-cell *matHeaderCellDef> Teléfono </th>
+                    <td mat-cell *matCellDef="let element">
+                        {{ element.telefono }}
+                    </td>
+                </ng-container>
+
+                <!-- Licencia Column -->
+                <ng-container matColumnDef="numLicencia">
+                    <th mat-header-cell *matHeaderCellDef> Licencia </th>
+                    <td mat-cell *matCellDef="let element">
+                        <span class="licencia-badge">{{ element.numLicencia }}</span>
+                    </td>
+                </ng-container>
+
+                <!-- Vencimiento Licencia Column -->
+                <ng-container matColumnDef="vencimientoLicencia">
+                    <th mat-header-cell *matHeaderCellDef> Vencimiento </th>
+                    <td mat-cell *matCellDef="let element">
+                        {{ element.vencimientoLicencia | date: 'dd/MM/yyyy' }}
+                    </td>
+                </ng-container>
+
+                <!-- Estado Column -->
+                <ng-container matColumnDef="activo">
+                    <th mat-header-cell *matHeaderCellDef class="text-center"> Estado </th>
+                    <td mat-cell *matCellDef="let element" class="text-center">
+                        <span class="badge" [ngClass]="element.activo ? 'badge-activo' : 'badge-inactivo'">
+                            {{ element.activo ? 'ACTIVO' : 'INACTIVO' }}
+                        </span>
+                    </td>
+                </ng-container>
+
+                <!-- Acciones Column -->
+                <ng-container matColumnDef="acciones">
+                    <th mat-header-cell *matHeaderCellDef class="text-center"> Acciones </th>
+                    <td mat-cell *matCellDef="let element" class="text-center">
+                        <!-- Botón Editar -->
+                        <button mat-icon-button color="primary" (click)="abrirDialogoEditar(element)"
+                            matTooltip="Editar Cliente">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+
+                        <!-- Botón Cambiar Estado con Menú -->
+                        <button mat-icon-button color="accent" [matMenuTriggerFor]="estadoMenu"
+                            matTooltip="Cambiar Estado">
+                            <mat-icon>sync_alt</mat-icon>
+                        </button>
+
+                        <!-- Menú Opciones de Estado -->
+                        <mat-menu #estadoMenu="matMenu">
+                            <button mat-menu-item (click)="cambiarEstado(element, true)"
+                                [disabled]="element.activo === true">
+                                <span class="badge badge-activo">Activar</span>
+                            </button>
+                            <button mat-menu-item (click)="cambiarEstado(element, false)"
+                                [disabled]="element.activo === false">
+                                <span class="badge badge-inactivo">Inhabilitar</span>
+                            </button>
+                        </mat-menu>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+                <!-- Estado vacío cuando no hay registros -->
+                <tr class="mat-row" *matNoDataRow>
+                    <td class="mat-cell empty-table" [attr.colspan]="displayedColumns.length">
+                        No se encontraron clientes registrados o que coincidan con la búsqueda.
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Paginador -->
+        <mat-paginator [length]="totalElements" [pageSize]="pageSize" [pageIndex]="pageIndex"
+            [pageSizeOptions]="[5, 10, 20, 50]" (page)="onPageChange($event)" showFirstLastButtons>
+        </mat-paginator>
+    </mat-card>
+</div>

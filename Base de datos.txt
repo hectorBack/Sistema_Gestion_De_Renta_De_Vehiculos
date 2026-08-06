@@ -1,0 +1,96 @@
+-- 1. Categorías de Vehículos
+CREATE TABLE categorias_vehiculo (
+    id_categoria SERIAL PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL UNIQUE, -- ej: Sedán, SUV, Compacto, Lujo
+    descripcion TEXT,
+    tarifa_diaria_base DECIMAL(10, 2) NOT NULL CHECK (tarifa_diaria_base > 0),
+    deposito_garantia DECIMAL(10, 2) NOT NULL CHECK (deposito_garantia >= 0)
+);
+
+-- 2. Sucursales de la Rentadora
+CREATE TABLE sucursales (
+    id_sucursal SERIAL PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    direccion TEXT NOT NULL,
+    telefono VARCHAR(20),
+    email VARCHAR(100)
+);
+
+-- 3. Estado y Catálogo de Vehículos
+CREATE TABLE vehiculos (
+    id_vehiculo SERIAL PRIMARY KEY,
+    id_categoria INT NOT NULL REFERENCES categorias_vehiculo(id_categoria),
+    id_sucursal_actual INT NOT NULL REFERENCES sucursales(id_sucursal),
+    vin VARCHAR(17) UNIQUE NOT NULL,
+    placa VARCHAR(15) UNIQUE NOT NULL,
+    marca VARCHAR(50) NOT NULL,
+    modelo VARCHAR(50) NOT NULL,
+    anio INT NOT NULL CHECK (anio >= 2000),
+    kilometraje INT NOT NULL DEFAULT 0 CHECK (kilometraje >= 0),
+    estado VARCHAR(20) NOT NULL DEFAULT 'disponible' 
+        CHECK (estado IN ('disponible', 'rentado', 'mantenimiento', 'fuera_servicio')),
+    creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 4. Clientes
+CREATE TABLE clientes (
+    id_cliente SERIAL PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    email VARCHAR(150) UNIQUE NOT NULL,
+    telefono VARCHAR(20) NOT NULL,
+    num_licencia VARCHAR(50) UNIQUE NOT NULL,
+    vencimiento_licencia DATE NOT NULL,
+    creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 5. Registro y Control de Rentas
+CREATE TABLE rentas (
+    id_renta BIGSERIAL PRIMARY KEY,
+    id_vehiculo INT NOT NULL REFERENCES vehiculos(id_vehiculo),
+    id_cliente INT NOT NULL REFERENCES clientes(id_cliente),
+    id_sucursal_retiro INT NOT NULL REFERENCES sucursales(id_sucursal),
+    id_sucursal_devolucion INT NOT NULL REFERENCES sucursales(id_sucursal),
+    
+    fecha_inicio TIMESTAMP NOT NULL,
+    fecha_fin_estimada TIMESTAMP NOT NULL,
+    fecha_devolucion_real TIMESTAMP,
+    
+    kilometraje_inicial INT NOT NULL,
+    kilometraje_final INT,
+    
+    costo_total DECIMAL(10, 2) DEFAULT 0.00,
+    estado VARCHAR(20) NOT NULL DEFAULT 'reservada' 
+        CHECK (estado IN ('reservada', 'activa', 'completada', 'cancelada')),
+    
+    creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    -- Validaciones de lógica de fechas y kilometraje
+    CONSTRAINT chk_fechas CHECK (fecha_fin_estimada > fecha_inicio),
+    CONSTRAINT chk_km CHECK (kilometraje_final IS NULL OR kilometraje_final >= kilometraje_inicial)
+);
+
+-- 6. Transacciones y Pagos
+CREATE TABLE pagos (
+    id_pago BIGSERIAL PRIMARY KEY,
+    id_renta BIGINT NOT NULL REFERENCES rentas(id_renta) ON DELETE CASCADE,
+    monto DECIMAL(10, 2) NOT NULL CHECK (monto > 0),
+    fecha_pago TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    metodo_pago VARCHAR(30) NOT NULL 
+        CHECK (metodo_pago IN ('tarjeta_credito', 'tarjeta_debito', 'transferencia', 'efectivo')),
+    referencia_transaccion VARCHAR(100),
+    estado VARCHAR(20) DEFAULT 'completado' 
+        CHECK (estado IN ('pendiente', 'completado', 'fallido', 'reembolsado'))
+);
+
+-- 7. Registro de Mantenimiento Preventivo y Correctivo
+CREATE TABLE mantenimientos (
+    id_mantenimiento SERIAL PRIMARY KEY,
+    id_vehiculo INT NOT NULL REFERENCES vehiculos(id_vehiculo),
+    tipo VARCHAR(50) NOT NULL, -- ej: Cambio de aceite, Frenos, Reparación motor
+    descripcion TEXT,
+    costo DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
+    fecha_inicio DATE NOT NULL,
+    fecha_fin DATE,
+    CONSTRAINT chk_fechas_mantenimiento CHECK (fecha_fin IS NULL OR fecha_fin >= fecha_inicio)
+);

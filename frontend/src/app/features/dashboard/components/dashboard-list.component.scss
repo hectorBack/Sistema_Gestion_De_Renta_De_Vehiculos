@@ -1,0 +1,276 @@
+.container-dashboard {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  // Header principal con título y subtítulo
+  .header-action {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+
+    h2 {
+      margin: 0;
+      font-weight: 600;
+    }
+
+    .subtitle {
+      color: #6c757d;
+      margin-top: 4px;
+    }
+
+    .btn-refresh {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+  }
+
+  // Spinner de carga global si los datos están cargando
+  .spinner-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.7);
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  // === SECCIÓN 1: Tarjetas de KPIs ===
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+
+    .kpi-card {
+      mat-card-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px;
+      }
+
+      .kpi-info {
+        .kpi-title {
+          font-size: 0.875rem;
+          color: #6c757d;
+          margin-bottom: 6px;
+          font-weight: 500;
+        }
+
+        .kpi-value {
+          font-size: 1.75rem;
+          font-weight: 700;
+          color: #212529;
+          margin: 0;
+        }
+      }
+
+      .kpi-icon-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+
+        mat-icon {
+          font-size: 28px;
+          width: 28px;
+          height: 28px;
+        }
+
+        &.rentas {
+          background-color: #e8f0fe;
+          color: #1a73e8;
+        }
+
+        &.ingresos {
+          background-color: #e6f4ea;
+          color: #137333;
+        }
+
+        &.disponibles {
+          background-color: #feefc3;
+          color: #b06000;
+        }
+
+        &.mantenimiento {
+          background-color: #fce8e6;
+          color: #c5221f;
+        }
+      }
+    }
+  }
+
+  // === SECCIÓN 2: Ocupación de Flota & Barra de Progreso ===
+  .ocupacion-card {
+    margin-bottom: 24px;
+
+    .ocupacion-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+
+      h3 {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+      }
+
+      .porcentaje {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1a73e8;
+      }
+    }
+
+    mat-progress-bar {
+      height: 10px;
+      border-radius: 5px;
+      margin-bottom: 16px;
+    }
+
+    .ocupacion-leyenda {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+
+      .item-leyenda {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.9rem;
+        color: #6c757d;
+
+        .dot {
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+
+          &.disponible {
+            background-color: #137333;
+          }
+          &.rentado {
+            background-color: #1a73e8;
+          }
+          &.mantenimiento {
+            background-color: #c5221f;
+          }
+        }
+
+        strong {
+          color: #212529;
+        }
+      }
+    }
+  }
+
+  // === SECCIÓN 3: Gráficos (Ingresos, Top Vehículos, Rentas por Sucursal) ===
+  .charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 24px;
+    margin-bottom: 24px;
+
+    .chart-card {
+      mat-card-header {
+        margin-bottom: 16px;
+
+        mat-card-title {
+          font-size: 1.05rem;
+          font-weight: 600;
+        }
+      }
+
+      .chart-wrapper {
+        position: relative;
+        min-height: 260px;
+        width: 100%;
+      }
+    }
+  }
+
+  // === SECCIÓN 4: Tabla de Últimas Rentas (Reutiliza la estructura de table-card) ===
+  .table-card {
+    position: relative;
+    overflow: hidden;
+
+    mat-card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #f1f3f5;
+
+      mat-card-title {
+        font-size: 1.05rem;
+        font-weight: 600;
+      }
+    }
+
+    .table-responsive {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+
+      .text-muted {
+        color: #6c757d;
+        font-size: 0.9em;
+      }
+
+      /* Badge para la placa del vehículo (igual al estilo de licencia-badge) */
+      .placa-badge {
+        background-color: #f1f3f5;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-family: monospace;
+        font-weight: bold;
+        letter-spacing: 0.5px;
+      }
+
+      /* Estilos para Badges de Estado de la Renta */
+      .badge {
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .badge-activa {
+        background-color: #e6f4ea;
+        color: #137333;
+      }
+
+      .badge-reservada {
+        background-color: #e8f0fe;
+        color: #1a73e8;
+      }
+
+      .badge-completada {
+        background-color: #f1f3f5;
+        color: #495057;
+      }
+
+      .badge-cancelada {
+        background-color: #fce8e6;
+        color: #c5221f;
+      }
+
+      .empty-table {
+        text-align: center;
+        padding: 32px;
+        color: #6c757d;
+      }
+    }
+  }
+}

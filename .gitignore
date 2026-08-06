@@ -1,0 +1,18 @@
+# Java & Spring Boot
+backend/target/
+backend/.classpath
+backend/.project
+backend/.settings/
+backend/*.iml
+backend/.idea/
+
+# Angular / Node
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/*.log
+
+# Archivos de entorno y SO
+.DS_Store
+Thumbs.db
+.vscode/

@@ -1,0 +1,96 @@
+<div class="dialog-title">
+    <h2 mat-dialog-title>
+        {{ isEditMode ? 'Editar Mantenimiento' : 'Registrar Nuevo Mantenimiento' }}
+    </h2>
+    <button mat-icon-button class="close-button" (click)="cancelar()" [disabled]="isLoading">
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
+
+<mat-dialog-content>
+    @if (isLoading) {
+    <div class="loading-container">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Procesando información...</p>
+    </div>
+    } @else {
+    <form [formGroup]="mantenimientoForm" class="dialog-form">
+
+        <!-- Fila 1: Selección de Vehículo -->
+        <mat-form-field appearance="outline">
+            <mat-label>Vehículo</mat-label>
+            <mat-select formControlName="idVehiculo" placeholder="Selecciona un vehículo">
+                @for (vehiculo of vehiculosList; track vehiculo.id) {
+                <mat-option [value]="vehiculo.id">
+                    {{ vehiculo.marca }} {{ vehiculo.modelo }} ({{ vehiculo.placa }})
+                </mat-option>
+                }
+            </mat-select>
+            @if (mantenimientoForm.get('vehiculoId')?.hasError('required')) {
+            <mat-error>El vehículo es obligatorio</mat-error>
+            }
+        </mat-form-field>
+
+        <!-- Fila 2: Tipo de Mantenimiento y Costo -->
+        <div class="form-row">
+            <mat-form-field appearance="outline">
+                <mat-label>Tipo de Mantenimiento</mat-label>
+                <mat-select formControlName="tipo" placeholder="Ej. PREVENTIVO">
+                    @for (tipo of tiposMantenimiento; track tipo) {
+                    <mat-option [value]="tipo">{{ tipo }}</mat-option>
+                    }
+                </mat-select>
+                @if (mantenimientoForm.get('tipo')?.hasError('required')) {
+                <mat-error>El tipo es obligatorio</mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Costo ($)</mat-label>
+                <input matInput formControlName="costo" type="number" step="0.01" min="0" placeholder="0.00" />
+                <span matPrefix>$&nbsp;</span>
+                @if (mantenimientoForm.get('costo')?.hasError('required')) {
+                <mat-error>El costo es obligatorio</mat-error>
+                }
+                @if (mantenimientoForm.get('costo')?.hasError('min')) {
+                <mat-error>El costo no puede ser negativo</mat-error>
+                }
+            </mat-form-field>
+        </div>
+
+        <!-- Fila 3: Fecha del Mantenimiento -->
+        <div class="form-row">
+            <mat-form-field appearance="outline">
+                <mat-label>Fecha de Mantenimiento</mat-label>
+                <input matInput [matDatepicker]="picker" formControlName="fechaMantenimiento"
+                    placeholder="Selecciona fecha" />
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+                @if (mantenimientoForm.get('fechaMantenimiento')?.hasError('required')) {
+                <mat-error>La fecha es obligatoria</mat-error>
+                }
+            </mat-form-field>
+        </div>
+
+        <!-- Fila 4: Descripción u Observaciones -->
+        <mat-form-field appearance="outline">
+            <mat-label>Descripción / Observaciones</mat-label>
+            <textarea matInput formControlName="descripcion" rows="3"
+                placeholder="Detalles de los trabajos realizados..."></textarea>
+            @if (mantenimientoForm.get('descripcion')?.hasError('maxlength')) {
+            <mat-error>Máximo 500 caracteres permitidos</mat-error>
+            }
+        </mat-form-field>
+
+    </form>
+    }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button (click)="cancelar()" [disabled]="isLoading">
+        Cancelar
+    </button>
+    <button mat-raised-button color="primary" (click)="guardar()" [disabled]="isLoading">
+        {{ isEditMode ? 'Actualizar' : 'Registrar' }}
+    </button>
+</mat-dialog-actions>

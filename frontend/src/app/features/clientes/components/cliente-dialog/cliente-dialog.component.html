@@ -1,0 +1,93 @@
+<div class="dialog-title">
+    <h2 mat-dialog-title>
+        {{ isEditMode ? 'Editar Cliente' : 'Registrar Nuevo Cliente' }}
+    </h2>
+    <button mat-icon-button class="close-button" (click)="cancelar()" [disabled]="isLoading">
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
+
+<mat-dialog-content>
+    @if (isLoading) {
+    <div class="loading-container">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Procesando información...</p>
+    </div>
+    } @else {
+    <form [formGroup]="clienteForm" class="dialog-form">
+
+        <!-- Fila 1: Nombre y Apellido -->
+        <div class="form-row">
+            <mat-form-field appearance="outline">
+                <mat-label>Nombre</mat-label>
+                <input matInput formControlName="nombre" placeholder="Ej. Juan" />
+                @if (clienteForm.get('nombre')?.hasError('required')) {
+                <mat-error>El nombre es obligatorio</mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Apellido</mat-label>
+                <input matInput formControlName="apellido" placeholder="Ej. Pérez" />
+                @if (clienteForm.get('apellido')?.hasError('required')) {
+                <mat-error>El apellido es obligatorio</mat-error>
+                }
+            </mat-form-field>
+        </div>
+
+        <!-- Fila 2: Email y Teléfono -->
+        <div class="form-row">
+            <mat-form-field appearance="outline">
+                <mat-label>Correo Electrónico</mat-label>
+                <input matInput formControlName="email" type="email" placeholder="ejemplo@correo.com" />
+                @if (clienteForm.get('email')?.hasError('required')) {
+                <mat-error>El email es obligatorio</mat-error>
+                }
+                @if (clienteForm.get('email')?.hasError('email')) {
+                <mat-error>Formato de email inválido</mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Teléfono</mat-label>
+                <input matInput formControlName="telefono" placeholder="Ej. +52 5512345678" />
+                @if (clienteForm.get('telefono')?.hasError('required')) {
+                <mat-error>El teléfono es obligatorio</mat-error>
+                }
+            </mat-form-field>
+        </div>
+
+        <!-- Fila 3: Licencia y Vencimiento -->
+        <div class="form-row">
+            <mat-form-field appearance="outline">
+                <mat-label>Número de Licencia</mat-label>
+                <input matInput formControlName="numLicencia" placeholder="Ej. LIC-987654" />
+                @if (clienteForm.get('numLicencia')?.hasError('required')) {
+                <mat-error>La licencia es obligatoria</mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Vencimiento de Licencia</mat-label>
+                <input matInput [matDatepicker]="picker" [min]="minDate" formControlName="vencimientoLicencia"
+                    placeholder="Selecciona fecha" />
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+                @if (clienteForm.get('vencimientoLicencia')?.hasError('required')) {
+                <mat-error>La fecha es obligatoria</mat-error>
+                }
+            </mat-form-field>
+        </div>
+
+    </form>
+    }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button (click)="cancelar()" [disabled]="isLoading">
+        Cancelar
+    </button>
+    <button mat-raised-button color="primary" (click)="guardar()" [disabled]="isLoading">
+        {{ isEditMode ? 'Actualizar' : 'Registrar' }}
+    </button>
+</mat-dialog-actions>

@@ -1,0 +1,136 @@
+<div class="dialog-title">
+    <h2 mat-dialog-title>
+        {{ isEditMode ? 'Detalles de la Renta' : 'Registrar Nueva Renta' }}
+    </h2>
+    <button mat-icon-button class="close-button" (click)="cancelar()" [disabled]="isLoading">
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
+
+<mat-dialog-content>
+    @if (isLoading || isLoadingCatalogos) {
+    <div class="loading-container">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Cargando información...</p>
+    </div>
+    } @else {
+    <form [formGroup]="rentaForm" class="dialog-form">
+
+        <!-- Fila 1: Cliente y Vehículo -->
+        <div class="form-row">
+            <!-- Autocomplete Cliente -->
+            <mat-form-field appearance="outline">
+                <mat-label>Cliente</mat-label>
+                <input type="text" matInput formControlName="clienteInput" [matAutocomplete]="autoCliente"
+                    placeholder="Escribe el nombre o licencia..." />
+                <mat-icon matSuffix>person_search</mat-icon>
+                <mat-autocomplete #autoCliente="matAutocomplete" [displayWith]="displayClienteFn">
+                    @for (cli of clientesFiltrados$ | async; track cli.id) {
+                    <mat-option [value]="cli">
+                        {{ cli.nombreCompleto }} (Lic: {{ cli.numLicencia }})
+                    </mat-option>
+                    }
+                </mat-autocomplete>
+                @if (rentaForm.get('clienteInput')?.hasError('required')) {
+                <mat-error>El cliente es obligatorio</mat-error>
+                }
+            </mat-form-field>
+
+            <!-- Autocomplete Vehículo -->
+            <mat-form-field appearance="outline">
+                <mat-label>Vehículo Disponible</mat-label>
+                <input type="text" matInput formControlName="vehiculoInput" [matAutocomplete]="autoVehiculo"
+                    placeholder="Escribe la marca, modelo o placa..." />
+                <mat-icon matSuffix>directions_car</mat-icon>
+                <mat-autocomplete #autoVehiculo="matAutocomplete" [displayWith]="displayVehiculoFn">
+                    @for (veh of vehiculosFiltrados$ | async; track veh.id) {
+                    <mat-option [value]="veh">
+                        {{ veh.marca }} {{ veh.modelo }} (Placa: {{ veh.placa }})
+                    </mat-option>
+                    }
+                </mat-autocomplete>
+                @if (rentaForm.get('vehiculoInput')?.hasError('required')) {
+                <mat-error>El vehículo es obligatorio</mat-error>
+                }
+            </mat-form-field>
+        </div>
+
+        <!-- Fila 2: Sucursal Retiro y Sucursal Devolución -->
+        <div class="form-row">
+            <mat-form-field appearance="outline">
+                <mat-label>Sucursal de Retiro</mat-label>
+                <mat-select formControlName="sucursalRetiroId" placeholder="Selecciona sucursal">
+                    @for (suc of sucursales; track suc.id) {
+                    <mat-option [value]="suc.id">{{ suc.nombre }}</mat-option>
+                    }
+                </mat-select>
+                @if (rentaForm.get('sucursalRetiroId')?.hasError('required')) {
+                <mat-error>La sucursal de retiro es obligatoria</mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Sucursal de Devolución</mat-label>
+                <mat-select formControlName="sucursalDevolucionId" placeholder="Selecciona sucursal">
+                    @for (suc of sucursales; track suc.id) {
+                    <mat-option [value]="suc.id">{{ suc.nombre }}</mat-option>
+                    }
+                </mat-select>
+                @if (rentaForm.get('sucursalDevolucionId')?.hasError('required')) {
+                <mat-error>La sucursal de devolución es obligatoria</mat-error>
+                }
+            </mat-form-field>
+        </div>
+
+        <!-- Fila 3: Fecha Inicio y Fecha Fin Estimada -->
+        <div class="form-row">
+            <mat-form-field appearance="outline">
+                <mat-label>Fecha de Inicio</mat-label>
+                <input matInput [matDatepicker]="pickerInicio" [min]="minDate" formControlName="fechaInicio"
+                    placeholder="Selecciona fecha" />
+                <mat-datepicker-toggle matSuffix [for]="pickerInicio"></mat-datepicker-toggle>
+                <mat-datepicker #pickerInicio></mat-datepicker>
+                @if (rentaForm.get('fechaInicio')?.hasError('required')) {
+                <mat-error>La fecha de inicio es obligatoria</mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Fecha Fin Estimada</mat-label>
+                <input matInput [matDatepicker]="pickerFin" [min]="rentaForm.get('fechaInicio')?.value || minDate"
+                    formControlName="fechaFinEstimada" placeholder="Selecciona fecha" />
+                <mat-datepicker-toggle matSuffix [for]="pickerFin"></mat-datepicker-toggle>
+                <mat-datepicker #pickerFin></mat-datepicker>
+                @if (rentaForm.get('fechaFinEstimada')?.hasError('required')) {
+                <mat-error>La fecha estimada es obligatoria</mat-error>
+                }
+            </mat-form-field>
+        </div>
+
+        <!-- Fila 4: Kilometraje Inicial -->
+        <div class="form-row">
+            <mat-form-field appearance="outline">
+                <mat-label>Kilometraje Inicial</mat-label>
+                <input matInput type="number" formControlName="kilometrajeInicial" placeholder="Ej. 15000" />
+                <mat-icon matSuffix>speed</mat-icon>
+                @if (rentaForm.get('kilometrajeInicial')?.hasError('required')) {
+                <mat-error>El kilometraje inicial es obligatorio</mat-error>
+                }
+                @if (rentaForm.get('kilometrajeInicial')?.hasError('min')) {
+                <mat-error>No puede ser menor a 0</mat-error>
+                }
+            </mat-form-field>
+        </div>
+
+    </form>
+    }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button (click)="cancelar()" [disabled]="isLoading">
+        Cancelar
+    </button>
+    <button mat-raised-button color="primary" (click)="guardar()" [disabled]="isLoading || isLoadingCatalogos">
+        {{ isEditMode ? 'Guardar Cambios' : 'Registrar Renta' }}
+    </button>
+</mat-dialog-actions>

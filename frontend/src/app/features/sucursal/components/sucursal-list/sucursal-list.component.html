@@ -1,0 +1,122 @@
+<div class="container-sucursales">
+    <!-- Header con título y botón principal -->
+    <div class="header-action">
+        <div>
+            <h2>Gestión de Sucursales</h2>
+            <p class="subtitle">Administra los puntos físicos de atención y retiro/devolución de vehículos</p>
+        </div>
+        <button mat-raised-button color="primary" (click)="abrirDialogoCrear()">
+            <mat-icon>add</mat-icon>
+            Nueva Sucursal
+        </button>
+    </div>
+
+    <!-- Tarjeta de Filtros -->
+    <mat-card class="filter-card">
+        <mat-card-content>
+            <form [formGroup]="filterForm" (ngSubmit)="aplicarFiltros()" class="filter-form">
+                <!-- Búsqueda por Nombre -->
+                <mat-form-field appearance="outline">
+                    <mat-label>Buscar sucursal</mat-label>
+                    <input matInput formControlName="nombre" placeholder="Nombre de la sucursal..." />
+                    <mat-icon matSuffix>search</mat-icon>
+                </mat-form-field>
+
+                <!-- Botones de Acción -->
+                <div class="filter-buttons">
+                    <button mat-raised-button color="primary" type="submit">
+                        <mat-icon>filter_list</mat-icon> Filtrar
+                    </button>
+                    <button mat-button type="button" (click)="limpiarFiltros()">
+                        <mat-icon>clear</mat-icon> Limpiar
+                    </button>
+                </div>
+            </form>
+        </mat-card-content>
+    </mat-card>
+
+    <!-- Tarjeta de Tabla -->
+    <mat-card class="table-card">
+        <!-- Spinner de Carga -->
+        @if (isLoading) {
+        <div class="spinner-container">
+            <mat-spinner diameter="50"></mat-spinner>
+        </div>
+        }
+
+        <div class="table-responsive">
+            <table mat-table [dataSource]="sucursales" class="mat-elevation-z0">
+                <!-- ID Column -->
+                <ng-container matColumnDef="id">
+                    <th mat-header-cell *matHeaderCellDef> ID </th>
+                    <td mat-cell *matCellDef="let element"> #{{ element.id }} </td>
+                </ng-container>
+
+                <!-- Nombre Column -->
+                <ng-container matColumnDef="nombre">
+                    <th mat-header-cell *matHeaderCellDef> Sucursal </th>
+                    <td mat-cell *matCellDef="let element">
+                        <strong>{{ element.nombre }}</strong>
+                    </td>
+                </ng-container>
+
+                <!-- Dirección Column -->
+                <ng-container matColumnDef="direccion">
+                    <th mat-header-cell *matHeaderCellDef> Dirección </th>
+                    <td mat-cell *matCellDef="let element" class="text-muted">
+                        {{ element.direccion }}
+                    </td>
+                </ng-container>
+
+                <!-- Teléfono Column -->
+                <ng-container matColumnDef="telefono">
+                    <th mat-header-cell *matHeaderCellDef> Teléfono </th>
+                    <td mat-cell *matCellDef="let element">
+                        {{ element.telefono || 'N/A' }}
+                    </td>
+                </ng-container>
+
+                <!-- Email Column -->
+                <ng-container matColumnDef="email">
+                    <th mat-header-cell *matHeaderCellDef> Email </th>
+                    <td mat-cell *matCellDef="let element" class="text-muted">
+                        {{ element.email || 'N/A' }}
+                    </td>
+                </ng-container>
+
+                <!-- Acciones Column -->
+                <ng-container matColumnDef="acciones">
+                    <th mat-header-cell *matHeaderCellDef class="text-center"> Acciones </th>
+                    <td mat-cell *matCellDef="let element" class="text-center">
+                        <!-- Botón Editar -->
+                        <button mat-icon-button color="primary" (click)="abrirDialogoEditar(element)"
+                            matTooltip="Editar Sucursal">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+
+                        <!-- Botón Eliminar -->
+                        <button mat-icon-button color="warn" (click)="eliminarSucursal(element)"
+                            matTooltip="Eliminar Sucursal">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+                <!-- Estado vacío cuando no hay registros -->
+                <tr class="mat-row" *matNoDataRow>
+                    <td class="mat-cell empty-table" [attr.colspan]="displayedColumns.length">
+                        No se encontraron sucursales registradas o que coincidan con la búsqueda.
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Paginador -->
+        <mat-paginator [length]="totalElements" [pageSize]="pageSize" [pageIndex]="pageIndex"
+            [pageSizeOptions]="[5, 10, 20, 50]" (page)="onPageChange($event)" showFirstLastButtons>
+        </mat-paginator>
+    </mat-card>
+</div>

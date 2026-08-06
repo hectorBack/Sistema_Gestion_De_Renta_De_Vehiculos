@@ -1,0 +1,101 @@
+<h2 mat-dialog-title class="dialog-title">
+    <mat-icon color="primary">{{ isEditMode ? 'edit' : 'directions_car' }}</mat-icon>
+    <span>{{ isEditMode ? 'Editar Vehículo' : 'Registrar Nuevo Vehículo' }}</span>
+</h2>
+
+<mat-dialog-content class="dialog-content">
+    <form [formGroup]="vehiculoForm" class="vehiculo-form">
+
+        <!-- Fila 1: Marca y Modelo -->
+        <div class="form-row">
+            <mat-form-field appearance="outline">
+                <mat-label>Marca</mat-label>
+                <input matInput formControlName="marca" placeholder="Ej. Toyota">
+                <mat-error *ngIf="vehiculoForm.get('marca')?.hasError('required')">
+                    La marca es requerida.
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Modelo</mat-label>
+                <input matInput formControlName="modelo" placeholder="Ej. Corolla">
+                <mat-error *ngIf="vehiculoForm.get('modelo')?.hasError('required')">
+                    El modelo es requerido.
+                </mat-error>
+            </mat-form-field>
+        </div>
+
+        <!-- Fila 2: Placa y Año -->
+        <div class="form-row">
+            <mat-form-field appearance="outline">
+                <mat-label>Placa</mat-label>
+                <input matInput formControlName="placa" placeholder="Ej. ABC-1234">
+                <mat-error *ngIf="vehiculoForm.get('placa')?.hasError('required')">
+                    La placa es requerida.
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Año</mat-label>
+                <input matInput type="number" formControlName="anio" placeholder="Ej. 2024">
+                <mat-error *ngIf="vehiculoForm.get('anio')?.hasError('required')">
+                    El año es requerido.
+                </mat-error>
+            </mat-form-field>
+        </div>
+
+        <!-- Fila 3: VIN y Categoría -->
+        <div class="form-row">
+            <mat-form-field appearance="outline">
+                <mat-label>Número VIN (Chasis)</mat-label>
+                <input matInput formControlName="vin" placeholder="17 caracteres">
+                <mat-error *ngIf="vehiculoForm.get('vin')?.hasError('required')">
+                    El VIN es requerido.
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Categoría</mat-label>
+                <mat-select formControlName="idCategoria">
+                    @for (cat of categorias; track cat.id) {
+                    <mat-option [value]="cat.id">{{ cat.nombre }} (${{ cat.tarifaDiariaBase }}/día)</mat-option>
+                    }
+                </mat-select>
+                <mat-error *ngIf="vehiculoForm.get('idCategoria')?.hasError('required')">
+                    Selecciona una categoría.
+                </mat-error>
+            </mat-form-field>
+        </div>
+
+        <!-- Fila 4: Sucursal Inicial y Kilometraje (solo en Creación) -->
+        <div class="form-row" *ngIf="!isEditMode">
+            <mat-form-field appearance="outline">
+                <mat-label>Sucursal</mat-label>
+                <input type="text" matInput formControlName="sucursalInput" [matAutocomplete]="auto"
+                    placeholder="Escribe para buscar..." />
+                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displaySucursalFn">
+                    @for (sucursal of sucursalesFiltradas$ | async; track sucursal.id) {
+                    <mat-option [value]="sucursal">{{ sucursal.nombre }}</mat-option>
+                    }
+                </mat-autocomplete>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Kilometraje Inicial</mat-label>
+                <input matInput type="number" formControlName="kilometraje" placeholder="0">
+                <mat-error *ngIf="vehiculoForm.get('kilometraje')?.hasError('required')">
+                    El kilometraje es requerido.
+                </mat-error>
+            </mat-form-field>
+        </div>
+
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="dialog-actions">
+    <button mat-button (click)="cancelar()" [disabled]="isLoading">Cancelar</button>
+    <button mat-raised-button color="primary" (click)="guardar()" [disabled]="isLoading">
+        <mat-spinner diameter="20" *ngIf="isLoading"></mat-spinner>
+        <span *ngIf="!isLoading">{{ isEditMode ? 'Guardar Cambios' : 'Registrar' }}</span>
+    </button>
+</mat-dialog-actions>
