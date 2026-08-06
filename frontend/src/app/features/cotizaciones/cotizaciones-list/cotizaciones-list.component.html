@@ -1,14 +1,10 @@
 <div class="container-clientes">
-    <!-- Header con título y botón para ejecutar el cálculo -->
+    <!-- Header con título únicamente -->
     <div class="header-action">
         <div>
             <h2>Calculadora de Cotizaciones</h2>
             <p class="subtitle">Calcula tarifas estimadas de renta al instante</p>
         </div>
-        <button mat-raised-button color="primary" (click)="calcular()">
-            <mat-icon>calculate</mat-icon>
-            Calcular Cotización
-        </button>
     </div>
 
     <!-- Tarjeta del Formulario de Cotización -->
@@ -69,7 +65,7 @@
                 <mat-checkbox formControlName="incluyeSeguro" color="primary">Incluir Seguro</mat-checkbox>
                 <mat-checkbox formControlName="conductorAdicional" color="primary">Conductor Adicional</mat-checkbox>
 
-                <!-- Botones de Acción del Formulario -->
+                <!-- Único Botón de Acción del Formulario -->
                 <div class="filter-buttons">
                     <button mat-raised-button color="primary" type="submit" [disabled]="isLoading">
                         <mat-icon>calculate</mat-icon> Cotizar
