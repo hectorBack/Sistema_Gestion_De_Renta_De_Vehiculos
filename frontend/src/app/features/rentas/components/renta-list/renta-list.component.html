@@ -11,6 +11,87 @@
         </button>
     </div>
 
+    <!-- Seccion de Tarjetas KPI / Métricas -->
+    <div class="kpi-grid">
+        <!-- KPI 1: Total Rentas Hoy -->
+        <mat-card class="kpi-card">
+            <mat-card-content>
+                <div class="kpi-info">
+                    <div class="kpi-title">Rentas de Hoy</div>
+                    <h3 class="kpi-value">{{ resumen?.totalRentasHoy ?? 0 }}</h3>
+                </div>
+                <div class="kpi-icon-wrapper rentas">
+                    <mat-icon>today</mat-icon>
+                </div>
+            </mat-card-content>
+        </mat-card>
+
+        <!-- KPI 2: Rentas Activas -->
+        <mat-card class="kpi-card">
+            <mat-card-content>
+                <div class="kpi-info">
+                    <div class="kpi-title">Activas</div>
+                    <h3 class="kpi-value">{{ resumen?.activas ?? 0 }}</h3>
+                </div>
+                <div class="kpi-icon-wrapper activas">
+                    <mat-icon>directions_car</mat-icon>
+                </div>
+            </mat-card-content>
+        </mat-card>
+
+        <!-- KPI 3: Rentas Completadas -->
+        <mat-card class="kpi-card">
+            <mat-card-content>
+                <div class="kpi-info">
+                    <div class="kpi-title">Completadas</div>
+                    <h3 class="kpi-value">{{ resumen?.completadas ?? 0 }}</h3>
+                </div>
+                <div class="kpi-icon-wrapper activas">
+                    <mat-icon>task_alt</mat-icon>
+                </div>
+            </mat-card-content>
+        </mat-card>
+
+        <!-- KPI 4: Reservadas -->
+        <mat-card class="kpi-card">
+            <mat-card-content>
+                <div class="kpi-info">
+                    <div class="kpi-title">Reservadas</div>
+                    <h3 class="kpi-value">{{ resumen?.reservadas ?? 0 }}</h3>
+                </div>
+                <div class="kpi-icon-wrapper reservadas">
+                    <mat-icon>bookmark</mat-icon>
+                </div>
+            </mat-card-content>
+        </mat-card>
+
+        <!-- KPI 5: Canceladas -->
+        <mat-card class="kpi-card">
+            <mat-card-content>
+                <div class="kpi-info">
+                    <div class="kpi-title">Canceladas</div>
+                    <h3 class="kpi-value">{{ resumen?.canceladas ?? 0 }}</h3>
+                </div>
+                <div class="kpi-icon-wrapper canceladas">
+                    <mat-icon>cancel</mat-icon>
+                </div>
+            </mat-card-content>
+        </mat-card>
+
+        <!-- KPI 6: Dinero del Día -->
+        <mat-card class="kpi-card">
+            <mat-card-content>
+                <div class="kpi-info">
+                    <div class="kpi-title">Ingresos del Día</div>
+                    <h3 class="kpi-value">${{ (resumen?.ingresosDelDia ?? 0) | number:'1.2-2' }}</h3>
+                </div>
+                <div class="kpi-icon-wrapper ingresos">
+                    <mat-icon>attach_money</mat-icon>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+
     <!-- Tarjeta de Filtros -->
     <mat-card class="filter-card">
         <mat-card-content>

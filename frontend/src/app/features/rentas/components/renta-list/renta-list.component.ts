@@ -21,7 +21,11 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 // Servicios y Modelos
 import { RentaService } from '../../../../core/services/rentas/renta.service';
-import { EstadoRenta, RentaResponse } from '../../../../core/models/renta.model';
+import {
+  EstadoRenta,
+  RentaResponse,
+  RentaResumenResponse,
+} from '../../../../core/models/renta.model';
 import { ClienteService } from '../../../../core/services/clientes/cliente.service';
 import { ClienteResponse } from '../../../../core/models/cliente.model';
 
@@ -48,6 +52,7 @@ import { DevolucionDialogComponent } from '../devolucion-dialog/devolucion-dialo
     MatSnackBarModule,
     MatMenuModule,
     MatAutocompleteModule,
+    MatCardModule,
   ],
   templateUrl: './renta-list.component.html',
   styleUrl: './renta-list.component.scss',
@@ -58,6 +63,10 @@ export class RentaListComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
+
+  // Estado del Resumen KPI
+  resumen: RentaResumenResponse | null = null;
+  isLoadingResumen = false;
 
   // Formulario de Filtros
   filterForm!: FormGroup;
@@ -101,6 +110,7 @@ export class RentaListComponent implements OnInit {
     this.initFilterForm();
     this.cargarClientesFiltro();
     this.cargarRentas();
+    this.cargarResumen();
   }
 
   private initFilterForm(): void {
@@ -155,6 +165,26 @@ export class RentaListComponent implements OnInit {
   }
 
   /**
+   * Carga la información de las tarjetas KPI desde el backend
+   */
+  public cargarResumen(): void {
+    this.isLoadingResumen = true;
+    this.rentaService.obtenerResumenDashboard().subscribe({
+      next: (data) => {
+        this.resumen = data;
+        this.isLoadingResumen = false;
+      },
+      error: (err) => {
+        console.error('Error al obtener el resumen del dashboard:', err);
+        this.isLoadingResumen = false;
+        this.snackBar.open('No se pudieron cargar las métricas del día', 'Cerrar', {
+          duration: 3000,
+        });
+      },
+    });
+  }
+
+  /**
    * Carga el listado paginado de rentas aplicando los filtros configurados.
    */
   cargarRentas(): void {
@@ -189,6 +219,7 @@ export class RentaListComponent implements OnInit {
     dialogRef.afterClosed().subscribe((resultado) => {
       if (resultado) {
         this.cargarRentas();
+        this.cargarResumen();
       }
     });
   }

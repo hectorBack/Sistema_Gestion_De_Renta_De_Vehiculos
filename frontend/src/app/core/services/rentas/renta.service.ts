@@ -7,6 +7,7 @@ import {
   RentaCreateRequest,
   RentaDevolucionRequest,
   RentaResponse,
+  RentaResumenResponse,
 } from '../../models/renta.model';
 
 @Injectable({
@@ -96,5 +97,12 @@ export class RentaService {
    */
   iniciarRenta(id: number): Observable<RentaResponse> {
     return this.http.patch<RentaResponse>(`${this.apiUrl}/${id}/iniciar`, {});
+  }
+
+  /**
+   * Obtiene las métricas globales y del día para las tarjetas KPI
+   */
+  obtenerResumenDashboard(): Observable<RentaResumenResponse> {
+    return this.http.get<RentaResumenResponse>(`${this.apiUrl}/resumen`);
   }
 }

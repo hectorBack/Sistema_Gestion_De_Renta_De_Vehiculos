@@ -34,6 +34,15 @@ export interface RentaResponse {
   estado: EstadoRenta;
 }
 
+export interface RentaResumenResponse {
+  totalRentasHoy: number;
+  activas: number;
+  completadas: number;
+  canceladas: number;
+  reservadas: number;
+  ingresosDelDia: number;
+}
+
 // Interfaz reutilizable para respuestas paginadas de Spring Boot (Page<RentaResponse>)
 export interface PageResponse<T> {
   content: T[];
