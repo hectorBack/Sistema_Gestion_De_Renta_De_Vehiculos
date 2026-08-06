@@ -1,6 +1,7 @@
 package com.sistemas.backend.Rentas.Controllers;
 
 import com.sistemas.backend.Rentas.DTO.RentaDto;
+import com.sistemas.backend.Rentas.DTO.RentaResumenDto;
 import com.sistemas.backend.Rentas.Entity.EstadoRenta;
 import com.sistemas.backend.Rentas.Services.RentaServices;
 import io.swagger.v3.oas.annotations.Operation;
@@ -96,5 +97,11 @@ public class RentaController {
             @PathVariable Long id,
             @RequestParam(defaultValue = "Cancelación solicitada por el usuario") String motivo) {
         return ResponseEntity.ok(rentaService.cancelarReserva(id, motivo));
+    }
+
+    @GetMapping("/resumen")
+    @Operation(summary = "Obtener Resumen", description = "Obtiene Resumen de metricas de rentas")
+    public ResponseEntity<RentaResumenDto> obtenerResumenDashboard() {
+        return ResponseEntity.ok(rentaService.obtenerResumenDashboard());
     }
 }

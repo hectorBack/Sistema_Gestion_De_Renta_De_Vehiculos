@@ -5,6 +5,7 @@ import com.sistemas.backend.Clientes.Repository.ClienteRepository;
 import com.sistemas.backend.Exception.BusinessRuleException;
 import com.sistemas.backend.Exception.ResourceNotFoundException;
 import com.sistemas.backend.Rentas.DTO.RentaDto;
+import com.sistemas.backend.Rentas.DTO.RentaResumenDto;
 import com.sistemas.backend.Rentas.Entity.EstadoRenta;
 import com.sistemas.backend.Rentas.Entity.Renta;
 import com.sistemas.backend.Rentas.Mapper.RentaMapper;
@@ -25,6 +26,7 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Slf4j
 @Service
@@ -206,6 +208,32 @@ public class RentaServiceImpl implements RentaServices {
         log.debug("Filtrando rentas por Estado: {} e idCliente: {}", estado, idCliente);
         return rentaRepository.buscarConFiltros(estado, idCliente, pageable)
                 .map(rentaMapper::toResponse);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public RentaResumenDto obtenerResumenDashboard() {
+        LocalDateTime inicioDia = LocalDate.now().atStartOfDay();
+        LocalDateTime finDia = LocalDate.now().atTime(LocalTime.MAX);
+
+        long totalHoy = rentaRepository.contarRentasHoy(inicioDia, finDia);
+        long activas = rentaRepository.contarPorEstado(EstadoRenta.ACTIVA);
+        long completadas = rentaRepository.contarPorEstado(EstadoRenta.COMPLETADA);
+        long canceladas = rentaRepository.contarPorEstado(EstadoRenta.CANCELADA);
+        long reservadas = rentaRepository.contarPorEstado(EstadoRenta.RESERVADA);
+
+        BigDecimal ingresosDia = rentaRepository.calcularIngresosDelDia(inicioDia, finDia);
+
+        log.debug("Métricas obtenidas - Hoy: {}, Activas: {}, Ingresos: {}", totalHoy, activas, ingresosDia);
+
+        return new RentaResumenDto(
+                totalHoy,
+                activas,
+                completadas,
+                canceladas,
+                reservadas,
+                ingresosDia
+        );
     }
 
     // --- Helper Method Privado de Dominio ---

@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -50,4 +51,22 @@ public interface RentaRepository extends JpaRepository<Renta, Long> {
             @Param("estado") EstadoRenta estado,
             @Param("idCliente") Integer idCliente,
             Pageable pageable);
+
+    // 1. Conteo total de rentas creadas o iniciadas hoy
+    @Query("SELECT COUNT(r) FROM Renta r WHERE r.fechaInicio BETWEEN :inicioDia AND :finDia")
+    long contarRentasHoy(
+            @Param("inicioDia") LocalDateTime inicioDia,
+            @Param("finDia") LocalDateTime finDia);
+
+    // 2. Conteo por estado específico en un rango del día (o global según necesites)
+    @Query("SELECT COUNT(r) FROM Renta r WHERE r.estado = :estado")
+    long contarPorEstado(@Param("estado") EstadoRenta estado);
+
+    // 3. Suma total de dinero generado en el día (ACTIVAS + COMPLETADAS)
+    @Query("SELECT COALESCE(SUM(r.costoTotal), 0) FROM Renta r " +
+            "WHERE r.estado IN ('ACTIVA', 'COMPLETADA') " +
+            "AND r.fechaInicio BETWEEN :inicioDia AND :finDia")
+    BigDecimal calcularIngresosDelDia(
+            @Param("inicioDia") LocalDateTime inicioDia,
+            @Param("finDia") LocalDateTime finDia);
 }
