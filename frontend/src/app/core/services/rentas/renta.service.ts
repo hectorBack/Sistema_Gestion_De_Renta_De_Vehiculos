@@ -51,11 +51,15 @@ export class RentaService {
   }
 
   /**
-   * Busca rentas aplicando filtros opcionales (estado o cliente) con paginación.
-   * GET /api/v1/rentas/buscar?estado={estado}&idCliente={idCliente}&page={page}&size={size}
+   * Busca rentas aplicando filtros opcionales (estado, cliente, fechaInicio, fechaFin) con paginación.
+   * GET /api/v1/rentas/buscar?estado={estado}&idCliente={idCliente}&fechaInicio={fechaInicio}&fechaFin={fechaFin}&page={page}&size={size}
    */
   buscarConFiltros(
-    filtros: { estado?: EstadoRenta | null; idCliente?: number | null },
+    filtros: {
+      estado?: EstadoRenta | null;
+      idCliente?: number | null;
+      fecha?: Date | string | null;
+    },
     page: number = 0,
     size: number = 10,
     sort: string = 'id,desc',
@@ -71,8 +75,21 @@ export class RentaService {
     if (filtros.idCliente) {
       params = params.set('idCliente', filtros.idCliente.toString());
     }
+    if (filtros.fecha) {
+      let fechaFormatted: string;
+      if (filtros.fecha instanceof Date) {
+        // Formato YYYY-MM-DD para compatibilidad con LocalDate en Spring
+        const year = filtros.fecha.getFullYear();
+        const month = String(filtros.fecha.getMonth() + 1).padStart(2, '0');
+        const day = String(filtros.fecha.getDate()).padStart(2, '0');
+        fechaFormatted = `${year}-${month}-${day}`;
+      } else {
+        fechaFormatted = filtros.fecha;
+      }
+      params = params.set('fecha', fechaFormatted);
+    }
 
-    return this.http.get<PageResponse<RentaResponse>>(this.apiUrl, { params });
+    return this.http.get<PageResponse<RentaResponse>>(`${this.apiUrl}/buscar`, { params });
   }
 
   /**

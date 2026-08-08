@@ -96,6 +96,7 @@
     <mat-card class="filter-card">
         <mat-card-content>
             <form [formGroup]="filterForm" (ngSubmit)="aplicarFiltros()" class="filter-form">
+
                 <!-- Filtro por Estado -->
                 <mat-form-field appearance="outline">
                     <mat-label>Estado</mat-label>
@@ -117,6 +118,14 @@
                         <mat-option [value]="cliente">{{ cliente.nombreCompleto }}</mat-option>
                         }
                     </mat-autocomplete>
+                </mat-form-field>
+
+                <!-- Datepicker para seleccionar una única Fecha -->
+                <mat-form-field appearance="outline">
+                    <mat-label>Fecha</mat-label>
+                    <input matInput [matDatepicker]="pickerFecha" formControlName="fecha" readonly />
+                    <mat-datepicker-toggle matIconSuffix [for]="pickerFecha"></mat-datepicker-toggle>
+                    <mat-datepicker #pickerFecha></mat-datepicker>
                 </mat-form-field>
 
                 <!-- Botones de Acción -->

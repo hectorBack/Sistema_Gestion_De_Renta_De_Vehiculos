@@ -18,6 +18,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 
 // Servicios y Modelos
 import { RentaService } from '../../../../core/services/rentas/renta.service';
@@ -53,6 +54,7 @@ import { DevolucionDialogComponent } from '../devolucion-dialog/devolucion-dialo
     MatMenuModule,
     MatAutocompleteModule,
     MatCardModule,
+    MatDatepickerModule,
   ],
   templateUrl: './renta-list.component.html',
   styleUrl: './renta-list.component.scss',
@@ -116,8 +118,9 @@ export class RentaListComponent implements OnInit {
   private initFilterForm(): void {
     this.filterForm = this.fb.group({
       clienteInput: [null],
-      estado: [null],
+      estado: ['ACTIVA'],
       idCliente: [null],
+      fecha: [null],
     });
 
     // Escuchar tipeo en sucursalInput para filtrar sugerencias y sincronizar el idSucursal
@@ -189,10 +192,10 @@ export class RentaListComponent implements OnInit {
    */
   cargarRentas(): void {
     this.isLoading = true;
-    const { estado, idCliente } = this.filterForm.value;
+    const { estado, idCliente, fecha } = this.filterForm.value;
 
     this.rentaService
-      .buscarConFiltros({ estado, idCliente }, this.pageIndex, this.pageSize)
+      .buscarConFiltros({ estado, idCliente, fecha }, this.pageIndex, this.pageSize)
       .subscribe({
         next: (page) => {
           this.rentas = page.content;
@@ -205,6 +208,21 @@ export class RentaListComponent implements OnInit {
           this.snackBar.open('Error al cargar las rentas', 'Cerrar', { duration: 4000 });
         },
       });
+  }
+
+  /**
+   * Ajusta automáticamente el filtro para mostrar únicamente las rentas del día de ayer.
+   */
+  filtrarAyer(): void {
+    const ayer = new Date();
+    ayer.setDate(ayer.getDate() - 1);
+
+    this.filterForm.patchValue({
+      estado: null, // Muestra todas las de ayer independientemente de su estado
+      fecha: ayer,
+    });
+
+    this.aplicarFiltros();
   }
 
   /**
@@ -290,7 +308,12 @@ export class RentaListComponent implements OnInit {
   }
 
   limpiarFiltros(): void {
-    this.filterForm.reset();
+    this.filterForm.reset({
+      clienteInput: null,
+      estado: 'ACTIVA', // <-- Mantiene 'ACTIVA' como estado por defecto
+      idCliente: null,
+      fecha: null,
+    });
     this.pageIndex = 0;
     this.cargarRentas();
   }
