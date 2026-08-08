@@ -204,9 +204,24 @@ public class RentaServiceImpl implements RentaServices {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<RentaDto.Response> buscarConFiltros(EstadoRenta estado, Integer idCliente, Pageable pageable) {
-        log.debug("Filtrando rentas por Estado: {} e idCliente: {}", estado, idCliente);
-        return rentaRepository.buscarConFiltros(estado, idCliente, pageable)
+    public Page<RentaDto.Response> buscarConFiltros(
+            EstadoRenta estado,
+            Integer idCliente,
+            LocalDate fecha,
+            Pageable pageable) {
+
+        LocalDateTime inicioDia = null;
+        LocalDateTime finDia = null;
+
+        if (fecha != null) {
+            inicioDia = fecha.atStartOfDay();                 // Ej: 2026-08-06T00:00:00
+            finDia = fecha.atTime(LocalTime.MAX);             // Ej: 2026-08-06T23:59:59.999999999
+        }
+
+        log.debug("Filtrando rentas por Estado: {}, idCliente: {}, Fecha: {} (de {} a {})",
+                estado, idCliente, fecha, inicioDia, finDia);
+
+        return rentaRepository.buscarConFiltros(estado, idCliente, inicioDia, finDia, pageable)
                 .map(rentaMapper::toResponse);
     }
 

@@ -13,9 +13,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/v1/rentas")
@@ -62,17 +66,17 @@ public class RentaController {
         return ResponseEntity.ok(rentaService.obtenerPorId(id));
     }
 
-    @GetMapping
+    @GetMapping("/buscar")
     @Operation(summary = "Listar rentas paginadas con filtros", description = "Obtiene el historial paginado de reservas y rentas con filtros opcionales")
-    public ResponseEntity<Page<RentaDto.Response>> listarPaginado(
+    public ResponseEntity<Page<RentaDto.Response>> buscarConFiltros(
             @RequestParam(required = false) EstadoRenta estado,
             @RequestParam(required = false) Integer idCliente,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha,
             @PageableDefault(page = 0, size = 10, sort = "fechaInicio", direction = Sort.Direction.DESC) Pageable pageable) {
 
-        if (estado != null || idCliente != null) {
-            return ResponseEntity.ok(rentaService.buscarConFiltros(estado, idCliente, pageable));
-        }
-        return ResponseEntity.ok(rentaService.listarPaginado(pageable));
+        // Se delega directamente al servicio de filtros.
+        // Si los tres filtros son null, la consulta devolverá la lista completa normalmente.
+        return ResponseEntity.ok(rentaService.buscarConFiltros(estado, idCliente, fecha, pageable));
     }
 
     @PatchMapping("/{id}/iniciar")

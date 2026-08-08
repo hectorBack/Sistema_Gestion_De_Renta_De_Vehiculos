@@ -6,6 +6,9 @@ import com.sistemas.backend.Rentas.Entity.EstadoRenta;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 public interface RentaServices {
 
     RentaDto.Response crearReserva(RentaDto.CreateRequest request);
@@ -18,6 +21,6 @@ public interface RentaServices {
 
     RentaDto.Response iniciarRenta(Long idRenta); // Entrega de llaves
     RentaDto.Response cancelarReserva(Long idRenta, String motivo);
-    Page<RentaDto.Response> buscarConFiltros(EstadoRenta estado, Integer idCliente, Pageable pageable);
+    Page<RentaDto.Response> buscarConFiltros(EstadoRenta estado, Integer idCliente, LocalDate fecha, Pageable pageable);
     RentaResumenDto obtenerResumenDashboard();
 }

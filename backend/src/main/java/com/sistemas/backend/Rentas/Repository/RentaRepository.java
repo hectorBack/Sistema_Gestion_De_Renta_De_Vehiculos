@@ -46,10 +46,14 @@ public interface RentaRepository extends JpaRepository<Renta, Long> {
     @EntityGraph(attributePaths = {"vehiculo", "vehiculo.categoria", "cliente", "sucursalRetiro", "sucursalDevolucion"})
     @Query("SELECT r FROM Renta r " +
             "WHERE (:estado IS NULL OR r.estado = :estado) " +
-            "AND (:idCliente IS NULL OR r.cliente.id = :idCliente)")
+            "AND (:idCliente IS NULL OR r.cliente.id = :idCliente) " +
+            "AND (r.fechaInicio >= :inicioDia OR cast(:inicioDia as timestamp) IS NULL) " +
+            "AND (r.fechaInicio <= :finDia OR cast(:finDia as timestamp) IS NULL)")
     Page<Renta> buscarConFiltros(
             @Param("estado") EstadoRenta estado,
             @Param("idCliente") Integer idCliente,
+            @Param("inicioDia") LocalDateTime inicioDia,
+            @Param("finDia") LocalDateTime finDia,
             Pageable pageable);
 
     // 1. Conteo total de rentas creadas o iniciadas hoy
