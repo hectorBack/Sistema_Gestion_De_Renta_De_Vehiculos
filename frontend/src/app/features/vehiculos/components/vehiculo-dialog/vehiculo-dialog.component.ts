@@ -58,7 +58,6 @@ function requiereSucursalValida(): ValidatorFn {
     MatAutocompleteModule,
   ],
   templateUrl: '../vehiculo-dialog/vehiculo-dialog.component.html',
-  styleUrl: '../vehiculo-dialog/vehiculo-dialog.component.scss',
 })
 export class VehiculoDialogComponent implements OnInit {
   private readonly fb = inject(FormBuilder);

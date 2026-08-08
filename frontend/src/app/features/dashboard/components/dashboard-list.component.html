@@ -1,206 +1,268 @@
-<div class="container-dashboard">
+<div class="max-w-[1320px] mx-auto p-4 sm:p-6 lg:p-8 font-sans relative">
+
     <!-- Spinner de Carga -->
-    <div class="spinner-container" *ngIf="isLoading">
-        <mat-spinner diameter="50"></mat-spinner>
+    <div *ngIf="isLoading"
+        class="absolute inset-0 bg-white/75 dark:bg-[#1e1e2d]/80 backdrop-blur-sm z-30 flex items-center justify-center rounded-2xl min-h-[400px]">
+        <mat-spinner diameter="44"></mat-spinner>
     </div>
 
     <!-- Encabezado con título y botón de recarga -->
-    <div class="header-action">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-            <h2>Dashboard General</h2>
-            <p class="subtitle">Resumen ejecutivo y métricas de rendimiento en tiempo real</p>
+            <h2 class="text-2xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight m-0">
+                Dashboard General
+            </h2>
+            <p class="text-sm font-medium text-slate-500 dark:text-slate-400 mt-1 m-0">
+                Resumen ejecutivo y métricas de rendimiento en tiempo real
+            </p>
         </div>
-        <button mat-flat-button color="primary" class="btn-refresh" (click)="cargarMetricas()" [disabled]="isLoading">
-            <mat-icon>refresh</mat-icon>
-            Actualizar
+        <button mat-flat-button color="primary"
+            class="!rounded-xl !px-5 !py-2.5 !font-semibold !shadow-md shadow-blue-500/20 self-start sm:self-auto"
+            (click)="cargarMetricas()" [disabled]="isLoading">
+            <mat-icon class="!mr-1">refresh</mat-icon>
+            <span>Actualizar</span>
         </button>
     </div>
 
     <ng-container *ngIf="metrics">
         <!-- SECCIÓN 1: Tarjetas de KPIs -->
-        <div class="kpi-grid">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+
             <!-- Rentas Activas -->
-            <mat-card class="kpi-card">
-                <mat-card-content>
-                    <div class="kpi-info">
-                        <div class="kpi-title">Rentas Activas</div>
-                        <div class="kpi-value">{{ metrics.kpis.rentasActivas }}</div>
-                    </div>
-                    <div class="kpi-icon-wrapper rentas">
-                        <mat-icon>key</mat-icon>
-                    </div>
-                </mat-card-content>
-            </mat-card>
+            <div
+                class="bg-white dark:bg-[#1e1e2d] border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm flex items-center justify-between">
+                <div class="flex flex-col">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Rentas
+                        Activas</span>
+                    <span class="text-3xl font-black text-slate-900 dark:text-slate-100 mt-2">{{
+                        metrics.kpis.rentasActivas }}</span>
+                </div>
+                <div
+                    class="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                    <mat-icon class="!w-6 !h-6 !text-2xl">vpn_key</mat-icon>
+                </div>
+            </div>
 
             <!-- Ingresos del Mes -->
-            <mat-card class="kpi-card">
-                <mat-card-content>
-                    <div class="kpi-info">
-                        <div class="kpi-title">Ingresos del Mes</div>
-                        <div class="kpi-value">{{ metrics.kpis.ingresosMesActual | currency:'USD':'symbol':'1.2-2' }}
-                        </div>
-                    </div>
-                    <div class="kpi-icon-wrapper ingresos">
-                        <mat-icon>payments</mat-icon>
-                    </div>
-                </mat-card-content>
-            </mat-card>
+            <div
+                class="bg-white dark:bg-[#1e1e2d] border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm flex items-center justify-between">
+                <div class="flex flex-col">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Ingresos
+                        del Mes</span>
+                    <span class="text-3xl font-black text-slate-900 dark:text-slate-100 mt-2">
+                        {{ metrics.kpis.ingresosMesActual | currency:'USD':'symbol':'1.2-2' }}
+                    </span>
+                </div>
+                <div
+                    class="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                    <mat-icon class="!w-6 !h-6 !text-2xl">attach_money</mat-icon>
+                </div>
+            </div>
 
             <!-- Vehículos Disponibles -->
-            <mat-card class="kpi-card">
-                <mat-card-content>
-                    <div class="kpi-info">
-                        <div class="kpi-title">Vehículos Disponibles</div>
-                        <div class="kpi-value">{{ metrics.kpis.vehiculosDisponibles }}</div>
-                    </div>
-                    <div class="kpi-icon-wrapper disponibles">
-                        <mat-icon>directions_car</mat-icon>
-                    </div>
-                </mat-card-content>
-            </mat-card>
+            <div
+                class="bg-white dark:bg-[#1e1e2d] border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm flex items-center justify-between">
+                <div class="flex flex-col">
+                    <span
+                        class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Vehículos
+                        Disponibles</span>
+                    <span class="text-3xl font-black text-slate-900 dark:text-slate-100 mt-2">{{
+                        metrics.kpis.vehiculosDisponibles }}</span>
+                </div>
+                <div
+                    class="w-12 h-12 rounded-xl bg-sky-50 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center">
+                    <mat-icon class="!w-6 !h-6 !text-2xl">directions_car</mat-icon>
+                </div>
+            </div>
 
             <!-- En Mantenimiento -->
-            <mat-card class="kpi-card">
-                <mat-card-content>
-                    <div class="kpi-info">
-                        <div class="kpi-title">En Mantenimiento</div>
-                        <div class="kpi-value">{{ metrics.kpis.vehiculosEnMantenimiento }}</div>
-                    </div>
-                    <div class="kpi-icon-wrapper mantenimiento">
-                        <mat-icon>build</mat-icon>
-                    </div>
-                </mat-card-content>
-            </mat-card>
+            <div
+                class="bg-white dark:bg-[#1e1e2d] border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm flex items-center justify-between">
+                <div class="flex flex-col">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">En
+                        Mantenimiento</span>
+                    <span class="text-3xl font-black text-slate-900 dark:text-slate-100 mt-2">{{
+                        metrics.kpis.vehiculosEnMantenimiento }}</span>
+                </div>
+                <div
+                    class="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                    <mat-icon class="!w-6 !h-6 !text-2xl">build</mat-icon>
+                </div>
+            </div>
+
         </div>
 
         <!-- SECCIÓN 2: Ocupación de Flota -->
-        <mat-card class="ocupacion-card">
-            <mat-card-content>
-                <div class="ocupacion-header">
-                    <h3>Tasa de Ocupación de la Flota</h3>
-                    <span class="porcentaje">{{ metrics.ocupacion.tasaOcupacionPorcentaje }}%</span>
+        <div
+            class="bg-white dark:bg-[#1e1e2d] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm mb-8">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100 m-0">Tasa de Ocupación de la Flota
+                    </h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 m-0 mt-0.5">Porcentaje de la flota en
+                        arrendamiento activo</p>
                 </div>
-                <mat-progress-bar mode="determinate"
-                    [value]="metrics.ocupacion.tasaOcupacionPorcentaje"></mat-progress-bar>
+                <span
+                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-extrabold bg-blue-50 text-blue-600 dark:bg-blue-500/15 dark:text-blue-400 self-start sm:self-auto">
+                    {{ metrics.ocupacion.tasaOcupacionPorcentaje }}%
+                </span>
+            </div>
 
-                <div class="ocupacion-leyenda">
-                    <div class="item-leyenda">
-                        <span class="dot disponible"></span>
-                        Disponibles: <strong>{{ metrics.ocupacion.disponibles }}</strong>
-                    </div>
-                    <div class="item-leyenda">
-                        <span class="dot rentado"></span>
-                        Rentados: <strong>{{ metrics.ocupacion.rentados }}</strong>
-                    </div>
-                    <div class="item-leyenda">
-                        <span class="dot mantenimiento"></span>
-                        Mantenimiento: <strong>{{ metrics.ocupacion.mantenimiento }}</strong>
-                    </div>
-                    <div class="item-leyenda">
-                        Total Flota: <strong>{{ metrics.ocupacion.totalFlota }}</strong>
-                    </div>
+            <div class="w-full my-4">
+                <mat-progress-bar mode="determinate" [value]="metrics.ocupacion.tasaOcupacionPorcentaje"
+                    class="!h-3 rounded-full overflow-hidden"></mat-progress-bar>
+            </div>
+
+            <div
+                class="flex flex-wrap items-center gap-6 pt-2 text-xs font-semibold text-slate-600 dark:text-slate-300">
+                <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                    <span>Disponibles: <strong class="text-slate-900 dark:text-slate-100 font-bold">{{
+                            metrics.ocupacion.disponibles }}</strong></span>
                 </div>
-            </mat-card-content>
-        </mat-card>
+                <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-blue-600"></span>
+                    <span>Rentados: <strong class="text-slate-900 dark:text-slate-100 font-bold">{{
+                            metrics.ocupacion.rentados }}</strong></span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                    <span>Mantenimiento: <strong class="text-slate-900 dark:text-slate-100 font-bold">{{
+                            metrics.ocupacion.mantenimiento }}</strong></span>
+                </div>
+                <div class="flex items-center gap-2 sm:ml-auto border-t sm:border-t-0 pt-2 sm:pt-0 w-full sm:w-auto">
+                    <span>Total Flota: <strong class="text-slate-900 dark:text-slate-100 font-bold text-sm">{{
+                            metrics.ocupacion.totalFlota }}</strong></span>
+                </div>
+            </div>
+        </div>
 
         <!-- SECCIÓN 3: Gráficos -->
-        <div class="charts-grid">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+
             <!-- Histórico de Ingresos -->
-            <mat-card class="chart-card">
-                <mat-card-header>
-                    <mat-card-title>Ingresos Mensuales</mat-card-title>
-                </mat-card-header>
-                <mat-card-content>
-                    <div class="chart-wrapper">
-                        <canvas #ingresosChart></canvas>
-                    </div>
-                </mat-card-content>
-            </mat-card>
+            <div
+                class="bg-white dark:bg-[#1e1e2d] border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
+                <h3 class="text-base font-bold text-slate-900 dark:text-slate-100 mb-4 m-0">Ingresos Mensuales</h3>
+                <div class="relative h-[260px] w-full">
+                    <canvas #ingresosChart></canvas>
+                </div>
+            </div>
 
             <!-- Top Vehículos -->
-            <mat-card class="chart-card">
-                <mat-card-header>
-                    <mat-card-title>Top Vehículos Más Rentados</mat-card-title>
-                </mat-card-header>
-                <mat-card-content>
-                    <div class="chart-wrapper">
-                        <canvas #topVehiculosChart></canvas>
-                    </div>
-                </mat-card-content>
-            </mat-card>
+            <div
+                class="bg-white dark:bg-[#1e1e2d] border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
+                <h3 class="text-base font-bold text-slate-900 dark:text-slate-100 mb-4 m-0">Top Vehículos Más Rentados
+                </h3>
+                <div class="relative h-[260px] w-full">
+                    <canvas #topVehiculosChart></canvas>
+                </div>
+            </div>
 
             <!-- Rentas por Sucursal -->
-            <mat-card class="chart-card">
-                <mat-card-header>
-                    <mat-card-title>Rentas por Sucursal</mat-card-title>
-                </mat-card-header>
-                <mat-card-content>
-                    <div class="chart-wrapper">
-                        <canvas #sucursalesChart></canvas>
-                    </div>
-                </mat-card-content>
-            </mat-card>
+            <div
+                class="bg-white dark:bg-[#1e1e2d] border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
+                <h3 class="text-base font-bold text-slate-900 dark:text-slate-100 mb-4 m-0">Rentas por Sucursal</h3>
+                <div class="relative h-[260px] w-full">
+                    <canvas #sucursalesChart></canvas>
+                </div>
+            </div>
+
         </div>
 
         <!-- SECCIÓN 4: Tabla de Últimas Rentas Registradas -->
-        <mat-card class="table-card">
-            <mat-card-header>
-                <mat-card-title>Últimas Rentas Registradas</mat-card-title>
-            </mat-card-header>
-            <mat-card-content class="p-0">
-                <div class="table-responsive">
-                    <table mat-table [dataSource]="metrics.alertasYActividad.ultimasRentas">
+        <div
+            class="bg-white dark:bg-[#1e1e2d] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden">
+            <div class="p-5 border-b border-slate-100 dark:border-slate-800">
+                <h3 class="text-base font-bold text-slate-900 dark:text-slate-100 m-0">Últimas Rentas Registradas</h3>
+            </div>
 
-                        <!-- Columna ID -->
-                        <ng-container matColumnDef="idRenta">
-                            <th mat-header-cell *matHeaderCellDef> ID </th>
-                            <td mat-cell *matCellDef="let element"> #{{ element.idRenta }} </td>
-                        </ng-container>
+            <div class="overflow-x-auto w-full">
+                <table mat-table [dataSource]="metrics.alertasYActividad.ultimasRentas"
+                    class="w-full bg-transparent border-collapse">
 
-                        <!-- Columna Cliente -->
-                        <ng-container matColumnDef="clienteNombre">
-                            <th mat-header-cell *matHeaderCellDef> Cliente </th>
-                            <td mat-cell *matCellDef="let element"> {{ element.clienteNombre }} </td>
-                        </ng-container>
+                    <!-- Columna ID -->
+                    <ng-container matColumnDef="idRenta">
+                        <th mat-header-cell *matHeaderCellDef
+                            class="!bg-slate-50 dark:!bg-[#181824] !text-slate-500 dark:!text-slate-400 !font-bold !text-xs uppercase tracking-wider !px-5 !py-4">
+                            ID </th>
+                        <td mat-cell *matCellDef="let element"
+                            class="!px-5 !py-3.5 text-slate-500 dark:text-slate-400 font-bold text-sm"> #{{
+                            element.idRenta }} </td>
+                    </ng-container>
 
-                        <!-- Columna Vehículo -->
-                        <ng-container matColumnDef="vehiculoInfo">
-                            <th mat-header-cell *matHeaderCellDef> Vehículo </th>
-                            <td mat-cell *matCellDef="let element">
-                                <span class="placa-badge">{{ element.vehiculoInfo }}</span>
-                            </td>
-                        </ng-container>
+                    <!-- Columna Cliente -->
+                    <ng-container matColumnDef="clienteNombre">
+                        <th mat-header-cell *matHeaderCellDef
+                            class="!bg-slate-50 dark:!bg-[#181824] !text-slate-500 dark:!text-slate-400 !font-bold !text-xs uppercase tracking-wider !px-5 !py-4">
+                            Cliente </th>
+                        <td mat-cell *matCellDef="let element"
+                            class="!px-5 !py-3.5 text-slate-900 dark:text-slate-100 font-semibold text-sm"> {{
+                            element.clienteNombre }} </td>
+                    </ng-container>
 
-                        <!-- Columna Fecha de Inicio -->
-                        <ng-container matColumnDef="fechaInicio">
-                            <th mat-header-cell *matHeaderCellDef> Fecha Inicio </th>
-                            <td mat-cell *matCellDef="let element">
-                                {{ element.fechaInicio | date:'dd/MM/yyyy HH:mm' }}
-                            </td>
-                        </ng-container>
+                    <!-- Columna Vehículo -->
+                    <ng-container matColumnDef="vehiculoInfo">
+                        <th mat-header-cell *matHeaderCellDef
+                            class="!bg-slate-50 dark:!bg-[#181824] !text-slate-500 dark:!text-slate-400 !font-bold !text-xs uppercase tracking-wider !px-5 !py-4">
+                            Vehículo </th>
+                        <td mat-cell *matCellDef="let element" class="!px-5 !py-3.5">
+                            <span
+                                class="inline-block bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md px-2 py-0.5 font-mono font-bold text-xs text-slate-900 dark:text-slate-100 tracking-wider">
+                                {{ element.vehiculoInfo }}
+                            </span>
+                        </td>
+                    </ng-container>
 
-                        <!-- Columna Estado -->
-                        <ng-container matColumnDef="estado">
-                            <th mat-header-cell *matHeaderCellDef> Estado </th>
-                            <td mat-cell *matCellDef="let element">
-                                <span class="badge" [ngClass]="getEstadoBadgeClass(element.estado)">
-                                    {{ element.estado }}
-                                </span>
-                            </td>
-                        </ng-container>
+                    <!-- Columna Fecha de Inicio -->
+                    <ng-container matColumnDef="fechaInicio">
+                        <th mat-header-cell *matHeaderCellDef
+                            class="!bg-slate-50 dark:!bg-[#181824] !text-slate-500 dark:!text-slate-400 !font-bold !text-xs uppercase tracking-wider !px-5 !py-4">
+                            Fecha Inicio </th>
+                        <td mat-cell *matCellDef="let element"
+                            class="!px-5 !py-3.5 text-slate-500 dark:text-slate-400 text-sm">
+                            {{ element.fechaInicio | date:'dd/MM/yyyy HH:mm' }}
+                        </td>
+                    </ng-container>
 
-                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                    <!-- Columna Estado -->
+                    <ng-container matColumnDef="estado">
+                        <th mat-header-cell *matHeaderCellDef
+                            class="!bg-slate-50 dark:!bg-[#181824] !text-slate-500 dark:!text-slate-400 !font-bold !text-xs uppercase tracking-wider !px-5 !py-4">
+                            Estado </th>
+                        <td mat-cell *matCellDef="let element" class="!px-5 !py-3.5">
+                            <span
+                                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider border"
+                                [ngClass]="{
+                      'bg-green-50 text-green-600 border-green-200 dark:bg-green-500/10 dark:text-green-400 dark:border-green-500/20': element.estado === 'ACTIVA' || element.estado === 'DISPONIBLE',
+                      'bg-blue-50 text-blue-600 border-blue-200 dark:bg-blue-500/10 dark:text-blue-400 dark:border-blue-500/20': element.estado === 'FINALIZADA' || element.estado === 'COMPLETADA',
+                      'bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-500/10 dark:text-yellow-400 dark:border-yellow-500/20': element.estado === 'PENDIENTE',
+                      'bg-red-50 text-red-600 border-red-200 dark:bg-red-500/10 dark:text-red-400 dark:border-red-500/20': element.estado === 'CANCELADA'
+                    }">
+                                <span class="w-1.5 h-1.5 rounded-full" [ngClass]="{
+                        'bg-green-600 dark:bg-green-400': element.estado === 'ACTIVA' || element.estado === 'DISPONIBLE',
+                        'bg-blue-600 dark:bg-blue-400': element.estado === 'FINALIZADA' || element.estado === 'COMPLETADA',
+                        'bg-yellow-600 dark:bg-yellow-400': element.estado === 'PENDIENTE',
+                        'bg-red-600 dark:bg-red-400': element.estado === 'CANCELADA'
+                      }"></span>
+                                {{ element.estado }}
+                            </span>
+                        </td>
+                    </ng-container>
 
-                        <!-- Fila Vacía -->
-                        <tr class="mat-row" *matNoDataRow>
-                            <td class="mat-cell empty-table" [attr.colspan]="displayedColumns.length">
-                                No hay actividades recientes grabadas.
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </mat-card-content>
-        </mat-card>
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+                        class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"></tr>
+
+                    <!-- Fila Vacía -->
+                    <tr class="mat-row" *matNoDataRow>
+                        <td class="!p-8 text-center text-slate-500 dark:text-slate-400 font-medium"
+                            [attr.colspan]="displayedColumns.length">
+                            No hay actividades recientes registradas.
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
     </ng-container>
 </div>

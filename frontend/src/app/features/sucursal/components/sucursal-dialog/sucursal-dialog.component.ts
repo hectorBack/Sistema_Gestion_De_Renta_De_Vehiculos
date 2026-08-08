@@ -34,7 +34,6 @@ export interface SucursalDialogData {
     MatSnackBarModule,
   ],
   templateUrl: './sucursal-dialog.component.html',
-  styleUrl: './sucursal-dialog.component.scss',
 })
 export class SucursalDialogComponent implements OnInit {
   private readonly fb = inject(FormBuilder);

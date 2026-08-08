@@ -44,7 +44,6 @@ import { VehiculoResponse, CategoriaResponse } from '../../../core/models/vehicu
     MatTooltipModule,
   ],
   templateUrl: './cotizaciones-list.component.html',
-  styleUrl: './cotizaciones-list.component.scss',
 })
 export class CotizacionesListComponent implements OnInit {
   private readonly fb = inject(FormBuilder);

@@ -34,7 +34,6 @@ export interface CategoriaDialogData {
     MatSnackBarModule,
   ],
   templateUrl: './categorias-dialog.component.html',
-  styleUrl: './categorias-dialog.component.scss',
 })
 export class CategoriaDialogComponent implements OnInit {
   private readonly fb = inject(FormBuilder);

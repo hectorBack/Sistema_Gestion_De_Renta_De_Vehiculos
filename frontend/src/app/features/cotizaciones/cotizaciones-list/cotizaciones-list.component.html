@@ -1,155 +1,286 @@
-<div class="container-clientes">
-    <!-- Header con título únicamente -->
-    <div class="header-action">
-        <div>
-            <h2>Calculadora de Cotizaciones</h2>
-            <p class="subtitle">Calcula tarifas estimadas de renta al instante</p>
-        </div>
+<div class="max-w-[1320px] mx-auto p-4 sm:p-6 lg:p-8 font-sans relative">
+  <!-- Encabezado -->
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+    <div>
+      <h2 class="m-0 text-2xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight">
+        Calculadora de Cotizaciones
+      </h2>
+      <p class="m-0 mt-1 text-sm font-medium text-slate-500 dark:text-slate-400">
+        Calcula tarifas estimadas de renta al instante de forma clara y rápida.
+      </p>
     </div>
+  </div>
 
-    <!-- Tarjeta del Formulario de Cotización -->
-    <mat-card class="filter-card">
-        <mat-card-content>
-            <form [formGroup]="cotizadorForm" (ngSubmit)="calcular()" class="filter-form">
+  <!-- Tarjeta del Formulario de Cotización -->
+  <div
+    class="bg-white dark:bg-[#1e1e2d] border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm mb-6"
+  >
+    <form [formGroup]="cotizadorForm" (ngSubmit)="calcular()" class="flex flex-col gap-5">
+      <!-- Encabezado sutil -->
+      <div
+        class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80 pb-3"
+      >
+        <span class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+          Parámetros de Cotización
+        </span>
+        <div class="flex items-center gap-2">
+          <button
+            mat-flat-button
+            color="primary"
+            type="submit"
+            [disabled]="isLoading"
+            class="!h-9 !rounded-lg !px-4 !text-xs !font-semibold !shadow-md shadow-blue-500/20"
+          >
+            <mat-icon class="!w-4 !h-4 !text-base !mr-1">calculate</mat-icon>
+            <span>Cotizar</span>
+          </button>
 
-                <!-- Tipo de Selección -->
-                <mat-form-field appearance="outline">
-                    <mat-label>Cotizar Por</mat-label>
-                    <mat-select formControlName="tipoSeleccion">
-                        <mat-option value="categoria">Categoría</mat-option>
-                        <mat-option value="vehiculo">Vehículo Específico</mat-option>
-                    </mat-select>
-                </mat-form-field>
-
-                <!-- Selección de Categoría (Condicional) -->
-                @if (cotizadorForm.get('tipoSeleccion')?.value === 'categoria') {
-                <mat-form-field appearance="outline">
-                    <mat-label>Categoría</mat-label>
-                    <mat-select formControlName="idCategoria">
-                        @for (cat of categoriasList; track cat.id) {
-                        <mat-option [value]="cat.id">{{ cat.nombre }}</mat-option>
-                        }
-                    </mat-select>
-                </mat-form-field>
-                }
-
-                <!-- Selección de Vehículo (Condicional) -->
-                @if (cotizadorForm.get('tipoSeleccion')?.value === 'vehiculo') {
-                <mat-form-field appearance="outline">
-                    <mat-label>Vehículo</mat-label>
-                    <mat-select formControlName="idVehiculo">
-                        @for (veh of vehiculosList; track veh.id) {
-                        <mat-option [value]="veh.id">{{ veh.marca }} {{ veh.modelo }} ({{ veh.placa }})</mat-option>
-                        }
-                    </mat-select>
-                </mat-form-field>
-                }
-
-                <!-- Datepicker Fecha Inicio -->
-                <mat-form-field appearance="outline">
-                    <mat-label>Fecha Inicio</mat-label>
-                    <input matInput [matDatepicker]="pickerInicio" formControlName="fechaInicio" readonly />
-                    <mat-datepicker-toggle matIconSuffix [for]="pickerInicio"></mat-datepicker-toggle>
-                    <mat-datepicker #pickerInicio></mat-datepicker>
-                </mat-form-field>
-
-                <!-- Datepicker Fecha Fin -->
-                <mat-form-field appearance="outline">
-                    <mat-label>Fecha Fin</mat-label>
-                    <input matInput [matDatepicker]="pickerFin" formControlName="fechaFin" readonly />
-                    <mat-datepicker-toggle matIconSuffix [for]="pickerFin"></mat-datepicker-toggle>
-                    <mat-datepicker #pickerFin></mat-datepicker>
-                </mat-form-field>
-
-                <!-- Checkboxes Opcionales -->
-                <mat-checkbox formControlName="incluyeSeguro" color="primary">Incluir Seguro</mat-checkbox>
-                <mat-checkbox formControlName="conductorAdicional" color="primary">Conductor Adicional</mat-checkbox>
-
-                <!-- Único Botón de Acción del Formulario -->
-                <div class="filter-buttons">
-                    <button mat-raised-button color="primary" type="submit" [disabled]="isLoading">
-                        <mat-icon>calculate</mat-icon> Cotizar
-                    </button>
-                    <button mat-button type="button" (click)="limpiar()">
-                        <mat-icon>clear</mat-icon> Limpiar
-                    </button>
-                </div>
-            </form>
-        </mat-card-content>
-    </mat-card>
-
-    <!-- Tarjeta de Resultados (Detalle / Tarjeta de Cotización) -->
-    <mat-card class="table-card">
-        <!-- Spinner de Carga -->
-        @if (isLoading) {
-        <div class="spinner-container">
-            <mat-spinner diameter="50"></mat-spinner>
+          <button
+            mat-button
+            type="button"
+            (click)="limpiar()"
+            class="!h-9 !rounded-lg !px-3 !text-xs !font-semibold !text-slate-500 hover:!bg-slate-100 dark:hover:!bg-slate-800"
+          >
+            <mat-icon class="!w-4 !h-4 !text-base !mr-1">clear</mat-icon>
+            <span>Limpiar</span>
+          </button>
         </div>
+      </div>
+
+      <!-- Grid de Campos del Formulario -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Tipo de Selección -->
+        <div class="w-full">
+          <mat-form-field appearance="outline" class="w-full !m-0">
+            <mat-label>Cotizar Por</mat-label>
+            <mat-select formControlName="tipoSeleccion">
+              <mat-option value="categoria">Categoría</mat-option>
+              <mat-option value="vehiculo">Vehículo Específico</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <!-- Selección de Categoría (Condicional) -->
+        @if (cotizadorForm.get('tipoSeleccion')?.value === 'categoria') {
+          <div class="w-full">
+            <mat-form-field appearance="outline" class="w-full !m-0">
+              <mat-label>Categoría</mat-label>
+              <mat-select formControlName="idCategoria">
+                @for (cat of categoriasList; track cat.id) {
+                  <mat-option [value]="cat.id">{{ cat.nombre }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
         }
 
-        <mat-card-content class="resultado-container">
-            @if (resultado) {
-            <div class="cotizacion-detalle-card">
-                <div class="detalle-header">
-                    <h3>Detalle de Cotización</h3>
-                    <span class="licencia-badge">{{ resultado.diasTotales }} día(s) / {{ resultado.horasTotales }}
-                        hora(s)</span>
-                </div>
+        <!-- Selección de Vehículo (Condicional) -->
+        @if (cotizadorForm.get('tipoSeleccion')?.value === 'vehiculo') {
+          <div class="w-full">
+            <mat-form-field appearance="outline" class="w-full !m-0">
+              <mat-label>Vehículo</mat-label>
+              <mat-select formControlName="idVehiculo">
+                @for (veh of vehiculosList; track veh.id) {
+                  <mat-option [value]="veh.id"
+                    >{{ veh.marca }} {{ veh.modelo }} ({{ veh.placa }})</mat-option
+                  >
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+        }
 
-                <p class="concepto-info"><strong>Concepto:</strong> {{ resultado.vehiculoOcategoriaInfo }}</p>
+        <!-- Datepicker Fecha Inicio -->
+        <div class="w-full">
+          <mat-form-field appearance="outline" class="w-full !m-0">
+            <mat-label>Fecha Inicio</mat-label>
+            <input matInput [matDatepicker]="pickerInicio" formControlName="fechaInicio" readonly />
+            <mat-datepicker-toggle matIconSuffix [for]="pickerInicio"></mat-datepicker-toggle>
+            <mat-datepicker #pickerInicio></mat-datepicker>
+          </mat-form-field>
+        </div>
 
-                <div class="detalle-grid">
-                    <div class="detalle-item">
-                        <span>Tarifa Diaria Base:</span>
-                        <strong>${{ resultado.tarifaDiariaBase | number:'1.2-2' }}</strong>
-                    </div>
-                    <div class="detalle-item">
-                        <span>Subtotal Renta:</span>
-                        <strong>${{ resultado.subtotalRenta | number:'1.2-2' }}</strong>
-                    </div>
+        <!-- Datepicker Fecha Fin -->
+        <div class="w-full">
+          <mat-form-field appearance="outline" class="w-full !m-0">
+            <mat-label>Fecha Fin</mat-label>
+            <input matInput [matDatepicker]="pickerFin" formControlName="fechaFin" readonly />
+            <mat-datepicker-toggle matIconSuffix [for]="pickerFin"></mat-datepicker-toggle>
+            <mat-datepicker #pickerFin></mat-datepicker>
+          </mat-form-field>
+        </div>
+      </div>
 
-                    @if (resultado.costoSeguro > 0) {
-                    <div class="detalle-item">
-                        <span>Costo Seguro:</span>
-                        <span class="text-muted">+${{ resultado.costoSeguro | number:'1.2-2' }}</span>
-                    </div>
-                    }
+      <!-- Opciones Adicionales (Checkboxes) -->
+      <div class="flex flex-wrap items-center gap-6 pt-1">
+        <mat-checkbox
+          formControlName="incluyeSeguro"
+          color="primary"
+          class="!text-slate-700 dark:!text-slate-300 font-medium"
+        >
+          Incluir Seguro
+        </mat-checkbox>
+        <mat-checkbox
+          formControlName="conductorAdicional"
+          color="primary"
+          class="!text-slate-700 dark:!text-slate-300 font-medium"
+        >
+          Conductor Adicional
+        </mat-checkbox>
+      </div>
+    </form>
+  </div>
 
-                    @if (resultado.costoConductorAdicional > 0) {
-                    <div class="detalle-item">
-                        <span>Conductor Adicional:</span>
-                        <span class="text-muted">+${{ resultado.costoConductorAdicional | number:'1.2-2' }}</span>
-                    </div>
-                    }
+  <!-- Tarjeta de Resultados -->
+  <div
+    class="relative bg-white dark:bg-[#1e1e2d] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm overflow-hidden"
+  >
+    <!-- Spinner de Carga -->
+    @if (isLoading) {
+      <div
+        class="absolute inset-0 bg-white/75 dark:bg-[#1e1e2d]/80 backdrop-blur-sm z-20 flex items-center justify-center"
+      >
+        <mat-spinner diameter="44"></mat-spinner>
+      </div>
+    }
 
-                    <div class="detalle-item">
-                        <span>Subtotal General:</span>
-                        <strong>${{ resultado.subtotalGeneral | number:'1.2-2' }}</strong>
-                    </div>
-                    <div class="detalle-item">
-                        <span>IVA (16%):</span>
-                        <span class="text-muted">${{ resultado.impuestos | number:'1.2-2' }}</span>
-                    </div>
-                </div>
+    @if (resultado) {
+      <div class="flex flex-col gap-6">
+        <!-- Detalle Header -->
+        <div
+          class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-slate-100 dark:border-slate-800/80 pb-4"
+        >
+          <div>
+            <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100 m-0">
+              Detalle de Cotización
+            </h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400 m-0 mt-0.5">
+              <strong class="text-slate-700 dark:text-slate-300">Concepto:</strong>
+              {{ resultado.vehiculoOcategoriaInfo }}
+            </p>
+          </div>
+          <span
+            class="inline-block bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-500/20 rounded-full px-3 py-1 text-xs font-bold tracking-wider"
+          >
+            {{ resultado.diasTotales }} día(s) / {{ resultado.horasTotales }} hora(s)
+          </span>
+        </div>
 
-                <hr class="divider" />
+        <!-- Grid de Desglose -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div
+            class="bg-slate-50 dark:bg-[#181824] border border-slate-100 dark:border-slate-800 rounded-xl p-4 flex flex-col justify-between"
+          >
+            <span
+              class="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider"
+              >Tarifa Diaria Base</span
+            >
+            <strong class="text-lg font-bold text-slate-900 dark:text-slate-100 mt-1"
+              >${{ resultado.tarifaDiariaBase | number: '1.2-2' }}</strong
+            >
+          </div>
 
-                <div class="detalle-footer">
-                    <div class="total-section">
-                        <span class="total-label">Total Estimado:</span>
-                        <span class="total-monto">${{ resultado.totalEstimado | number:'1.2-2' }}</span>
-                    </div>
-                    <div class="garantia-section">
-                        <span>Depósito en Garantía Sugerido:</span>
-                        <strong>${{ resultado.depositoGarantiaSugerido | number:'1.2-2' }}</strong>
-                    </div>
-                </div>
+          <div
+            class="bg-slate-50 dark:bg-[#181824] border border-slate-100 dark:border-slate-800 rounded-xl p-4 flex flex-col justify-between"
+          >
+            <span
+              class="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider"
+              >Subtotal Renta</span
+            >
+            <strong class="text-lg font-bold text-slate-900 dark:text-slate-100 mt-1"
+              >${{ resultado.subtotalRenta | number: '1.2-2' }}</strong
+            >
+          </div>
+
+          @if (resultado.costoSeguro > 0) {
+            <div
+              class="bg-slate-50 dark:bg-[#181824] border border-slate-100 dark:border-slate-800 rounded-xl p-4 flex flex-col justify-between"
+            >
+              <span
+                class="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider"
+                >Costo Seguro</span
+              >
+              <strong class="text-lg font-bold text-emerald-600 dark:text-emerald-400 mt-1"
+                >+${{ resultado.costoSeguro | number: '1.2-2' }}</strong
+              >
             </div>
-            } @else {
-            <div class="empty-table">
-                Selecciona los parámetros y haz clic en "Cotizar" para ver el desglose detallado aquí.
+          }
+
+          @if (resultado.costoConductorAdicional > 0) {
+            <div
+              class="bg-slate-50 dark:bg-[#181824] border border-slate-100 dark:border-slate-800 rounded-xl p-4 flex flex-col justify-between"
+            >
+              <span
+                class="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider"
+                >Conductor Adicional</span
+              >
+              <strong class="text-lg font-bold text-emerald-600 dark:text-emerald-400 mt-1"
+                >+${{ resultado.costoConductorAdicional | number: '1.2-2' }}</strong
+              >
             </div>
-            }
-        </mat-card-content>
-    </mat-card>
+          }
+
+          <div
+            class="bg-slate-50 dark:bg-[#181824] border border-slate-100 dark:border-slate-800 rounded-xl p-4 flex flex-col justify-between"
+          >
+            <span
+              class="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider"
+              >Subtotal General</span
+            >
+            <strong class="text-lg font-bold text-slate-900 dark:text-slate-100 mt-1"
+              >${{ resultado.subtotalGeneral | number: '1.2-2' }}</strong
+            >
+          </div>
+
+          <div
+            class="bg-slate-50 dark:bg-[#181824] border border-slate-100 dark:border-slate-800 rounded-xl p-4 flex flex-col justify-between"
+          >
+            <span
+              class="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider"
+              >IVA (16%)</span
+            >
+            <strong class="text-lg font-bold text-slate-600 dark:text-slate-400 mt-1"
+              >${{ resultado.impuestos | number: '1.2-2' }}</strong
+            >
+          </div>
+        </div>
+
+        <!-- Footer con Totales -->
+        <div
+          class="mt-2 pt-4 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50 dark:bg-[#181824] rounded-xl p-5"
+        >
+          <div class="flex flex-col">
+            <span
+              class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500"
+              >Depósito en Garantía Sugerido</span
+            >
+            <strong class="text-lg font-bold text-slate-800 dark:text-slate-200"
+              >${{ resultado.depositoGarantiaSugerido | number: '1.2-2' }}</strong
+            >
+          </div>
+
+          <div class="flex flex-col sm:items-end">
+            <span
+              class="text-xs font-extrabold uppercase tracking-wider text-blue-600 dark:text-blue-400"
+              >Total Estimado</span
+            >
+            <span class="text-3xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight"
+              >${{ resultado.totalEstimado | number: '1.2-2' }}</span
+            >
+          </div>
+        </div>
+      </div>
+    } @else {
+      <!-- Estado Vacío -->
+      <div class="py-12 px-4 text-center text-slate-500 dark:text-slate-400 font-medium">
+        <mat-icon class="!w-12 !h-12 !text-5xl text-slate-300 dark:text-slate-600 mb-2"
+          >calculate</mat-icon
+        >
+        <p class="m-0 text-sm">
+          Selecciona los parámetros y haz clic en <strong>"Cotizar"</strong> para ver el desglose
+          detallado aquí.
+        </p>
+      </div>
+    }
+  </div>
 </div>

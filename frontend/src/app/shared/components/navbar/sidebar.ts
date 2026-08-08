@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject } from '@angular/core';
+import { CommonModule, DOCUMENT } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
 // Angular Material Modules
@@ -7,6 +7,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatButtonModule } from '@angular/material/button';
 
 interface MenuItem {
   label: string;
@@ -25,11 +26,15 @@ interface MenuItem {
     MatIconModule,
     MatDividerModule,
     MatTooltipModule,
+    MatButtonModule,
   ],
   templateUrl: './sidebar.html',
-  styleUrl: './sidebar.scss',
 })
-export class SidebarComponent {
+export class SidebarComponent implements OnInit {
+  private readonly document = inject(DOCUMENT);
+
+  isDarkMode = false;
+
   // Ítems de navegación principal
   mainNavItems: MenuItem[] = [
     { label: 'Dashboard', icon: 'dashboard', route: '/dashboard' },
@@ -45,4 +50,26 @@ export class SidebarComponent {
     { label: 'Mantenimientos', icon: 'build', route: '/mantenimientos' },
     { label: 'Cotizaciones', icon: 'request_quote', route: '/cotizaciones' },
   ];
+
+  ngOnInit(): void {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      this.isDarkMode = true;
+      this.document.documentElement.classList.add('dark');
+      this.document.body.classList.add('dark');
+    }
+  }
+
+  toggleTheme(): void {
+    this.isDarkMode = !this.isDarkMode;
+    if (this.isDarkMode) {
+      this.document.documentElement.classList.add('dark');
+      this.document.body.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      this.document.documentElement.classList.remove('dark');
+      this.document.body.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  }
 }

@@ -42,7 +42,6 @@ import { ClienteDialogComponent } from '../cliente-dialog/cliente-dialog.compone
     MatMenuModule,
   ],
   templateUrl: './cliente-list.component.html',
-  styleUrl: './cliente-list.component.scss',
 })
 export class ClienteListComponent implements OnInit {
   private readonly clienteService = inject(ClienteService);

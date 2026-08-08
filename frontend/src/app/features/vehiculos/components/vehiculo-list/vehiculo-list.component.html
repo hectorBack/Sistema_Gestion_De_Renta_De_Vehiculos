@@ -1,127 +1,203 @@
-<div class="container-vehiculos">
+<div class="max-w-[1320px] mx-auto p-4 sm:p-6 lg:p-8 font-sans relative">
 
-    <!-- Encabezado de la página -->
-    <div class="header-action">
+    <!-- Encabezado -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <div>
-            <h2>Gestión de Flota de Vehículos</h2>
-            <p class="subtitle">Consulta, filtra y administra los autos registrados en el sistema.</p>
+            <h2 class="m-0 text-2xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight">
+                Gestión de Flota de Vehículos
+            </h2>
+            <p class="m-0 mt-1 text-sm font-medium text-slate-500 dark:text-slate-400">
+                Consulta, filtra y administra los autos registrados en el sistema.
+            </p>
         </div>
-        <button mat-raised-button color="primary" (click)="abrirDialogoCrear()">
-            <mat-icon>add</mat-icon>
-            Nuevo Vehículo
+        <button mat-flat-button color="primary"
+            class="!rounded-xl !px-5 !py-2.5 !font-semibold !shadow-md shadow-blue-500/20"
+            (click)="abrirDialogoCrear()">
+            <mat-icon class="!mr-1">add</mat-icon>
+            <span>Nuevo Vehículo</span>
         </button>
     </div>
 
     <!-- Tarjeta de Filtros -->
-    <mat-card class="filter-card">
-        <mat-card-content>
-            <form [formGroup]="filterForm" (ngSubmit)="aplicarFiltros()" class="filter-form">
+    <div
+        class="bg-white dark:bg-[#1e1e2d] border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm mb-6">
+        <form [formGroup]="filterForm" (ngSubmit)="aplicarFiltros()" class="flex flex-col gap-4">
 
-                <!-- Filtro por Marca -->
-                <mat-form-field appearance="outline">
-                    <mat-label>Marca o modelo</mat-label>
-                    <input matInput formControlName="marca" placeholder="Ej. Toyota">
-                    <mat-icon matSuffix>search</mat-icon>
-                </mat-form-field>
-
-                <!-- Filtro por Sucursal -->
-                <mat-form-field appearance="outline">
-                    <mat-label>Sucursal</mat-label>
-                    <input type="text" matInput formControlName="sucursalInput" [matAutocomplete]="auto"
-                        placeholder="Escribe para buscar..." />
-                    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displaySucursalFn">
-                        @for (sucursal of sucursalesFiltradas$ | async; track sucursal.id) {
-                        <mat-option [value]="sucursal">{{ sucursal.nombre }}</mat-option>
-                        }
-                    </mat-autocomplete>
-                </mat-form-field>
-
-                <!-- Filtro por Estado -->
-                <mat-form-field appearance="outline">
-                    <mat-label>Estado Operativo</mat-label>
-                    <mat-select formControlName="estado">
-                        <mat-option [value]="null">Todos los estados</mat-option>
-                        @for (est of estadosList; track est) {
-                        <mat-option [value]="est">{{ est }}</mat-option>
-                        }
-                    </mat-select>
-                </mat-form-field>
-
-                <!-- Botones de Acción para Filtro -->
-                <div class="filter-buttons">
-                    <button mat-raised-button color="primary" type="submit">
-                        <mat-icon>filter_list</mat-icon> Filtrar
+            <!-- Encabezado sutil opcional para estructurar mejor -->
+            <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80 pb-3">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                    Filtrar catálogo
+                </span>
+                <div class="flex items-center gap-2">
+                    <button mat-flat-button color="primary" type="submit"
+                        class="!h-9 !rounded-lg !px-4 !text-xs !font-semibold">
+                        <mat-icon class="!w-4 !h-4 !text-base !mr-1">filter_list</mat-icon>
+                        <span>Aplicar Filtros</span>
                     </button>
-                    <button mat-button type="button" (click)="limpiarFiltros()">
-                        <mat-icon>clear</mat-icon> Limpiar
+
+                    <button mat-button type="button" (click)="limpiarFiltros()"
+                        class="!h-9 !rounded-lg !px-3 !text-xs !font-semibold !text-slate-500 hover:!bg-slate-100 dark:hover:!bg-slate-800">
+                        <mat-icon class="!w-4 !h-4 !text-base !mr-1">clear</mat-icon>
+                        <span>Limpiar</span>
                     </button>
                 </div>
+            </div>
 
-            </form>
-        </mat-card-content>
-    </mat-card>
+            <!-- Inputs en Grid de 3 Columnas perfectamente distribuidas -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 
-    <!-- Contenedor Tabla + Loading -->
-    <mat-card class="table-card">
-        <div class="spinner-container" *ngIf="isLoading">
-            <mat-spinner diameter="50"></mat-spinner>
+                <!-- Marca / Modelo -->
+                <div class="w-full">
+                    <mat-form-field appearance="outline" class="w-full !m-0">
+                        <mat-label>Marca o modelo</mat-label>
+                        <input matInput formControlName="marca" placeholder="Ej. Toyota, Corolla">
+                        <mat-icon matSuffix class="!text-slate-400">search</mat-icon>
+                    </mat-form-field>
+                </div>
+
+                <!-- Sucursal -->
+                <div class="w-full">
+                    <mat-form-field appearance="outline" class="w-full !m-0">
+                        <mat-label>Sucursal</mat-label>
+                        <input type="text" matInput formControlName="sucursalInput" [matAutocomplete]="auto"
+                            placeholder="Escribe para buscar..." />
+                        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displaySucursalFn">
+                            @for (sucursal of sucursalesFiltradas$ | async; track sucursal.id) {
+                            <mat-option [value]="sucursal">{{ sucursal.nombre }}</mat-option>
+                            }
+                        </mat-autocomplete>
+                    </mat-form-field>
+                </div>
+
+                <!-- Estado Operativo -->
+                <div class="w-full">
+                    <mat-form-field appearance="outline" class="w-full !m-0">
+                        <mat-label>Estado Operativo</mat-label>
+                        <mat-select formControlName="estado">
+                            <mat-option [value]="null">Todos los estados</mat-option>
+                            @for (est of estadosList; track est) {
+                            <mat-option [value]="est">{{ est }}</mat-option>
+                            }
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+
+            </div>
+
+        </form>
+    </div>
+
+    <!-- Tarjeta de Tabla -->
+    <div
+        class="relative bg-white dark:bg-[#1e1e2d] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden">
+
+        <div *ngIf="isLoading"
+            class="absolute inset-0 bg-white/75 dark:bg-[#1e1e2d]/80 backdrop-blur-sm z-20 flex items-center justify-center">
+            <mat-spinner diameter="44"></mat-spinner>
         </div>
 
-        <div class="table-responsive">
-            <table mat-table [dataSource]="vehiculos" class="mat-elevation-z1">
+        <div class="overflow-x-auto w-full">
+            <table mat-table [dataSource]="vehiculos" class="w-full bg-transparent border-collapse">
 
                 <!-- ID Column -->
                 <ng-container matColumnDef="id">
-                    <th mat-header-cell *matHeaderCellDef> ID </th>
-                    <td mat-cell *matCellDef="let element"> #{{ element.id }} </td>
-                </ng-container>
-
-                <!-- Vehículo (Marca, Modelo, Año) -->
-                <ng-container matColumnDef="vehiculo">
-                    <th mat-header-cell *matHeaderCellDef> Vehículo </th>
-                    <td mat-cell *matCellDef="let element">
-                        <strong>{{ element.marca }} {{ element.modelo }}</strong>
-                        <span class="text-muted"> ({{ element.anio }})</span>
+                    <th mat-header-cell *matHeaderCellDef
+                        class="!bg-slate-50 dark:!bg-[#181824] !text-slate-500 dark:!text-slate-400 !font-bold !text-xs uppercase tracking-wider !px-5 !py-4">
+                        ID </th>
+                    <td mat-cell *matCellDef="let element"
+                        class="!px-5 !py-3.5 text-slate-500 dark:text-slate-400 font-bold text-sm"> #{{ element.id }}
                     </td>
                 </ng-container>
 
-                <!-- Placa Column -->
+                <!-- Vehículo -->
+                <ng-container matColumnDef="vehiculo">
+                    <th mat-header-cell *matHeaderCellDef
+                        class="!bg-slate-50 dark:!bg-[#181824] !text-slate-500 dark:!text-slate-400 !font-bold !text-xs uppercase tracking-wider !px-5 !py-4">
+                        Vehículo </th>
+                    <td mat-cell *matCellDef="let element" class="!px-5 !py-3.5 text-sm">
+                        <strong class="text-slate-900 dark:text-slate-100 font-bold">{{ element.marca }} {{
+                            element.modelo }}</strong>
+                        <span class="text-slate-500 dark:text-slate-400 text-xs"> ({{ element.anio }})</span>
+                    </td>
+                </ng-container>
+
+                <!-- Placa -->
                 <ng-container matColumnDef="placa">
-                    <th mat-header-cell *matHeaderCellDef> Placa </th>
-                    <td mat-cell *matCellDef="let element">
-                        <span class="placa-badge">{{ element.placa }}</span>
+                    <th mat-header-cell *matHeaderCellDef
+                        class="!bg-slate-50 dark:!bg-[#181824] !text-slate-500 dark:!text-slate-400 !font-bold !text-xs uppercase tracking-wider !px-5 !py-4">
+                        Placa </th>
+                    <td mat-cell *matCellDef="let element" class="!px-5 !py-3.5">
+                        <span
+                            class="inline-block bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md px-2 py-0.5 font-mono font-bold text-xs text-slate-900 dark:text-slate-100 tracking-wider">
+                            {{ element.placa }}
+                        </span>
                     </td>
                 </ng-container>
 
                 <!-- VIN Column -->
                 <ng-container matColumnDef="vin">
-                    <th mat-header-cell *matHeaderCellDef> VIN </th>
-                    <td mat-cell *matCellDef="let element"> {{ element.vin }} </td>
+                    <th mat-header-cell *matHeaderCellDef
+                        class="!bg-slate-50 dark:!bg-[#181824] !text-slate-500 dark:!text-slate-400 !font-bold !text-xs uppercase tracking-wider !px-5 !py-4">
+                        VIN </th>
+                    <td mat-cell *matCellDef="let element"
+                        class="!px-5 !py-3.5 font-mono text-xs text-slate-500 dark:text-slate-400"> {{ element.vin }}
+                    </td>
                 </ng-container>
 
                 <!-- Sucursal Column -->
                 <ng-container matColumnDef="sucursalNombre">
-                    <th mat-header-cell *matHeaderCellDef> Sucursal Actual </th>
-                    <td mat-cell *matCellDef="let element"> {{ element.sucursalNombre }} </td>
+                    <th mat-header-cell *matHeaderCellDef
+                        class="!bg-slate-50 dark:!bg-[#181824] !text-slate-500 dark:!text-slate-400 !font-bold !text-xs uppercase tracking-wider !px-5 !py-4">
+                        Sucursal Actual </th>
+                    <td mat-cell *matCellDef="let element"
+                        class="!px-5 !py-3.5 text-sm text-slate-700 dark:text-slate-300"> {{ element.sucursalNombre }}
+                    </td>
                 </ng-container>
 
                 <!-- Categoría Column -->
                 <ng-container matColumnDef="categoriaNombre">
-                    <th mat-header-cell *matHeaderCellDef> Categoría </th>
-                    <td mat-cell *matCellDef="let element"> {{ element.categoriaNombre }} </td>
+                    <th mat-header-cell *matHeaderCellDef
+                        class="!bg-slate-50 dark:!bg-[#181824] !text-slate-500 dark:!text-slate-400 !font-bold !text-xs uppercase tracking-wider !px-5 !py-4">
+                        Categoría </th>
+                    <td mat-cell *matCellDef="let element" class="!px-5 !py-3.5">
+                        <span
+                            class="inline-block bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-full px-2.5 py-1 text-xs font-semibold text-slate-600 dark:text-slate-300">
+                            {{ element.categoriaNombre }}
+                        </span>
+                    </td>
                 </ng-container>
 
                 <!-- Kilometraje Column -->
                 <ng-container matColumnDef="kilometraje">
-                    <th mat-header-cell *matHeaderCellDef> Kilometraje </th>
-                    <td mat-cell *matCellDef="let element"> {{ element.kilometraje | number }} km </td>
+                    <th mat-header-cell *matHeaderCellDef
+                        class="!bg-slate-50 dark:!bg-[#181824] !text-slate-500 dark:!text-slate-400 !font-bold !text-xs uppercase tracking-wider !px-5 !py-4">
+                        Kilometraje </th>
+                    <td mat-cell *matCellDef="let element"
+                        class="!px-5 !py-3.5 text-sm font-semibold text-slate-900 dark:text-slate-100 whitespace-nowrap">
+                        {{ element.kilometraje | number }} km
+                    </td>
                 </ng-container>
 
                 <!-- Estado Column -->
                 <ng-container matColumnDef="estado">
-                    <th mat-header-cell *matHeaderCellDef> Estado </th>
-                    <td mat-cell *matCellDef="let element">
-                        <span class="badge" [ngClass]="getEstadoBadgeClass(element.estado)">
+                    <th mat-header-cell *matHeaderCellDef
+                        class="!bg-slate-50 dark:!bg-[#181824] !text-slate-500 dark:!text-slate-400 !font-bold !text-xs uppercase tracking-wider !px-5 !py-4">
+                        Estado </th>
+                    <td mat-cell *matCellDef="let element" class="!px-5 !py-3.5">
+                        <span
+                            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider border"
+                            [ngClass]="{
+                    'bg-green-50 text-green-600 border-green-200 dark:bg-green-500/10 dark:text-green-400 dark:border-green-500/20': element.estado === 'DISPONIBLE',
+                    'bg-blue-50 text-blue-600 border-blue-200 dark:bg-blue-500/10 dark:text-blue-400 dark:border-blue-500/20': element.estado === 'RENTADO',
+                    'bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-500/10 dark:text-yellow-400 dark:border-yellow-500/20': element.estado === 'MANTENIMIENTO',
+                    'bg-red-50 text-red-600 border-red-200 dark:bg-red-500/10 dark:text-red-400 dark:border-red-500/20': element.estado === 'FUERA_SERVICIO' || element.estado === 'FUERA-SERVICIO'
+                  }">
+                            <span class="w-1.5 h-1.5 rounded-full" [ngClass]="{
+                      'bg-green-600 dark:bg-green-400': element.estado === 'DISPONIBLE',
+                      'bg-blue-600 dark:bg-blue-400': element.estado === 'RENTADO',
+                      'bg-yellow-600 dark:bg-yellow-400': element.estado === 'MANTENIMIENTO',
+                      'bg-red-600 dark:bg-red-400': element.estado === 'FUERA_SERVICIO' || element.estado === 'FUERA-SERVICIO'
+                    }"></span>
                             {{ element.estado }}
                         </span>
                     </td>
@@ -129,26 +205,26 @@
 
                 <!-- Acciones Column -->
                 <ng-container matColumnDef="acciones">
-                    <th mat-header-cell *matHeaderCellDef class="text-center"> Acciones </th>
-                    <td mat-cell *matCellDef="let element" class="text-center">
-                        <button mat-icon-button color="primary" (click)="abrirDialogoEditar(element)"
-                            matTooltip="Editar Vehículo">
-                            <mat-icon>edit</mat-icon>
-                        </button>
+                    <th mat-header-cell *matHeaderCellDef
+                        class="!bg-slate-50 dark:!bg-[#181824] !text-slate-500 dark:!text-slate-400 !font-bold !text-xs uppercase tracking-wider !px-5 !py-4 text-center">
+                        Acciones </th>
+                    <td mat-cell *matCellDef="let element" class="!px-5 !py-3.5 text-center">
+                        <div class="flex items-center justify-center gap-1">
+                            <button mat-icon-button class="!text-blue-600 hover:!bg-blue-50 dark:hover:!bg-blue-500/10"
+                                (click)="abrirDialogoEditar(element)" matTooltip="Editar Vehículo">
+                                <mat-icon>edit</mat-icon>
+                            </button>
+                            <button mat-icon-button class="!text-sky-600 hover:!bg-sky-50 dark:hover:!bg-sky-500/10"
+                                [matMenuTriggerFor]="estadoMenu" matTooltip="Cambiar Estado">
+                                <mat-icon>sync_alt</mat-icon>
+                            </button>
+                        </div>
 
-
-                        <!-- Botón Cambiar Estado con Menú Desplegable -->
-                        <button mat-icon-button color="accent" [matMenuTriggerFor]="estadoMenu"
-                            matTooltip="Cambiar Estado">
-                            <mat-icon>sync_alt</mat-icon>
-                        </button>
-
-                        <!-- Menú Opciones de Estado -->
                         <mat-menu #estadoMenu="matMenu">
                             @for (est of estadosList; track est) {
                             <button mat-menu-item (click)="cambiarEstado(element, est)"
                                 [disabled]="element.estado === est">
-                                <span class="badge" [ngClass]="getEstadoBadgeClass(est)">{{ est }}</span>
+                                <span>{{ est }}</span>
                             </button>
                             }
                         </mat-menu>
@@ -156,21 +232,25 @@
                 </ng-container>
 
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+                    class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"></tr>
 
-                <!-- Estado Vacío -->
                 <tr class="mat-row" *matNoDataRow>
-                    <td class="mat-cell empty-table" [attr.colspan]="displayedColumns.length">
+                    <td class="!p-8 text-center text-slate-500 dark:text-slate-400 font-medium"
+                        [attr.colspan]="displayedColumns.length">
                         No se encontraron vehículos registrados con los criterios seleccionados.
                     </td>
                 </tr>
             </table>
         </div>
 
-        <!-- Paginador -->
-        <mat-paginator [length]="totalElements" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 25, 50]"
-            (page)="onPageChange($event)" showFirstLastButtons>
-        </mat-paginator>
-    </mat-card>
+        <!-- Footer de la tabla / Paginador -->
+        <div
+            class="px-4 py-2 bg-slate-50/50 dark:bg-[#181824]/50 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-end">
+            <mat-paginator [length]="totalElements" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 25, 50]"
+                (page)="onPageChange($event)" showFirstLastButtons class="!bg-transparent">
+            </mat-paginator>
+        </div>
+    </div>
 
 </div>

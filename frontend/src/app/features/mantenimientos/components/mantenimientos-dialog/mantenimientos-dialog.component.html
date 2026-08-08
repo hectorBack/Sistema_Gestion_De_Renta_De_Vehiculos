@@ -1,96 +1,174 @@
-<div class="dialog-title">
-    <h2 mat-dialog-title>
+<div
+  class="p-2 max-w-[650px] w-full font-sans bg-white dark:bg-[#1e1e2d] text-slate-900 dark:text-slate-100"
+>
+  <!-- Título del Diálogo -->
+  <div
+    class="flex items-center justify-between pb-4 mb-2 border-b border-slate-100 dark:border-slate-800"
+  >
+    <h2
+      mat-dialog-title
+      class="!flex !items-center !gap-2.5 !m-0 !p-0 !text-lg !font-extrabold !text-slate-900 dark:!text-slate-100 tracking-tight"
+    >
+      <div
+        class="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center"
+      >
+        <mat-icon class="!w-5 !h-5 !text-xl">{{ isEditMode ? 'edit' : 'build' }}</mat-icon>
+      </div>
+      <span class="text-slate-900 dark:text-slate-100">
         {{ isEditMode ? 'Editar Mantenimiento' : 'Registrar Nuevo Mantenimiento' }}
+      </span>
     </h2>
-    <button mat-icon-button class="close-button" (click)="cancelar()" [disabled]="isLoading">
-        <mat-icon>close</mat-icon>
+
+    <button
+      mat-icon-button
+      (click)="cancelar()"
+      [disabled]="isLoading"
+      class="!text-slate-400 hover:!text-slate-600 dark:hover:!text-slate-200"
+    >
+      <mat-icon>close</mat-icon>
     </button>
-</div>
+  </div>
 
-<mat-dialog-content>
+  <!-- Contenido del Formulario -->
+  <mat-dialog-content class="!py-4 !px-1 !m-0 max-h-[75vh]">
     @if (isLoading) {
-    <div class="loading-container">
+      <div class="py-12 flex flex-col items-center justify-center gap-3">
         <mat-spinner diameter="40"></mat-spinner>
-        <p>Procesando información...</p>
-    </div>
+        <p class="text-sm font-medium text-slate-500 dark:text-slate-400 m-0">
+          Procesando información...
+        </p>
+      </div>
     } @else {
-    <form [formGroup]="mantenimientoForm" class="dialog-form">
-
+      <form [formGroup]="mantenimientoForm" class="flex flex-col gap-4">
         <!-- Fila 1: Selección de Vehículo -->
-        <mat-form-field appearance="outline">
+        <div class="w-full">
+          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="w-full">
             <mat-label>Vehículo</mat-label>
             <mat-select formControlName="idVehiculo" placeholder="Selecciona un vehículo">
-                @for (vehiculo of vehiculosList; track vehiculo.id) {
+              @for (vehiculo of vehiculosList; track vehiculo.id) {
                 <mat-option [value]="vehiculo.id">
-                    {{ vehiculo.marca }} {{ vehiculo.modelo }} ({{ vehiculo.placa }})
+                  {{ vehiculo.marca }} {{ vehiculo.modelo }} ({{ vehiculo.placa }})
                 </mat-option>
-                }
+              }
             </mat-select>
-            @if (mantenimientoForm.get('vehiculoId')?.hasError('required')) {
-            <mat-error>El vehículo es obligatorio</mat-error>
+            @if (mantenimientoForm.get('idVehiculo')?.hasError('required')) {
+              <mat-error class="!text-red-500 dark:!text-red-400 !font-semibold">
+                El vehículo es obligatorio.
+              </mat-error>
             }
-        </mat-form-field>
+          </mat-form-field>
+        </div>
 
         <!-- Fila 2: Tipo de Mantenimiento y Costo -->
-        <div class="form-row">
-            <mat-form-field appearance="outline">
-                <mat-label>Tipo de Mantenimiento</mat-label>
-                <mat-select formControlName="tipo" placeholder="Ej. PREVENTIVO">
-                    @for (tipo of tiposMantenimiento; track tipo) {
-                    <mat-option [value]="tipo">{{ tipo }}</mat-option>
-                    }
-                </mat-select>
-                @if (mantenimientoForm.get('tipo')?.hasError('required')) {
-                <mat-error>El tipo es obligatorio</mat-error>
-                }
-            </mat-form-field>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="w-full">
+            <mat-label>Tipo de Mantenimiento</mat-label>
+            <mat-select formControlName="tipo" placeholder="Ej. PREVENTIVO">
+              @for (tipo of tiposMantenimiento; track tipo) {
+                <mat-option [value]="tipo">{{ tipo }}</mat-option>
+              }
+            </mat-select>
+            @if (mantenimientoForm.get('tipo')?.hasError('required')) {
+              <mat-error class="!text-red-500 dark:!text-red-400 !font-semibold">
+                El tipo es obligatorio.
+              </mat-error>
+            }
+          </mat-form-field>
 
-            <mat-form-field appearance="outline">
-                <mat-label>Costo ($)</mat-label>
-                <input matInput formControlName="costo" type="number" step="0.01" min="0" placeholder="0.00" />
-                <span matPrefix>$&nbsp;</span>
-                @if (mantenimientoForm.get('costo')?.hasError('required')) {
-                <mat-error>El costo es obligatorio</mat-error>
-                }
-                @if (mantenimientoForm.get('costo')?.hasError('min')) {
-                <mat-error>El costo no puede ser negativo</mat-error>
-                }
-            </mat-form-field>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="w-full">
+            <mat-label>Costo ($)</mat-label>
+            <input
+              matInput
+              formControlName="costo"
+              type="number"
+              step="0.01"
+              min="0"
+              placeholder="0.00"
+            />
+            <span matPrefix class="text-slate-500 dark:text-slate-400 font-medium">$&nbsp;</span>
+            @if (mantenimientoForm.get('costo')?.hasError('required')) {
+              <mat-error class="!text-red-500 dark:!text-red-400 !font-semibold">
+                El costo es obligatorio.
+              </mat-error>
+            }
+            @if (mantenimientoForm.get('costo')?.hasError('min')) {
+              <mat-error class="!text-red-500 dark:!text-red-400 !font-semibold">
+                El costo no puede ser negativo.
+              </mat-error>
+            }
+          </mat-form-field>
         </div>
 
         <!-- Fila 3: Fecha del Mantenimiento -->
-        <div class="form-row">
-            <mat-form-field appearance="outline">
-                <mat-label>Fecha de Mantenimiento</mat-label>
-                <input matInput [matDatepicker]="picker" formControlName="fechaMantenimiento"
-                    placeholder="Selecciona fecha" />
-                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                <mat-datepicker #picker></mat-datepicker>
-                @if (mantenimientoForm.get('fechaMantenimiento')?.hasError('required')) {
-                <mat-error>La fecha es obligatoria</mat-error>
-                }
-            </mat-form-field>
+        <div class="w-full">
+          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="w-full">
+            <mat-label>Fecha de Mantenimiento</mat-label>
+            <input
+              matInput
+              [matDatepicker]="picker"
+              formControlName="fechaMantenimiento"
+              placeholder="Selecciona fecha"
+            />
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="picker"
+              class="!text-slate-400"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+            @if (mantenimientoForm.get('fechaMantenimiento')?.hasError('required')) {
+              <mat-error class="!text-red-500 dark:!text-red-400 !font-semibold">
+                La fecha es obligatoria.
+              </mat-error>
+            }
+          </mat-form-field>
         </div>
 
         <!-- Fila 4: Descripción u Observaciones -->
-        <mat-form-field appearance="outline">
+        <div class="w-full">
+          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="w-full">
             <mat-label>Descripción / Observaciones</mat-label>
-            <textarea matInput formControlName="descripcion" rows="3"
-                placeholder="Detalles de los trabajos realizados..."></textarea>
+            <textarea
+              matInput
+              formControlName="descripcion"
+              rows="3"
+              placeholder="Detalles de los trabajos realizados..."
+            ></textarea>
             @if (mantenimientoForm.get('descripcion')?.hasError('maxlength')) {
-            <mat-error>Máximo 500 caracteres permitidos</mat-error>
+              <mat-error class="!text-red-500 dark:!text-red-400 !font-semibold">
+                Máximo 500 caracteres permitidos.
+              </mat-error>
             }
-        </mat-form-field>
-
-    </form>
+          </mat-form-field>
+        </div>
+      </form>
     }
-</mat-dialog-content>
+  </mat-dialog-content>
 
-<mat-dialog-actions align="end">
-    <button mat-button (click)="cancelar()" [disabled]="isLoading">
-        Cancelar
+  <!-- Acciones del Diálogo -->
+  <mat-dialog-actions
+    align="end"
+    class="!flex !items-center !justify-end !gap-3 !pt-4 !pb-1 !m-0 border-t border-slate-100 dark:border-slate-800"
+  >
+    <button
+      mat-button
+      type="button"
+      (click)="cancelar()"
+      [disabled]="isLoading"
+      class="!h-10 !rounded-xl !px-4 !font-semibold !text-slate-600 dark:!text-slate-300 hover:!bg-slate-100 dark:hover:!bg-slate-800"
+    >
+      Cancelar
     </button>
-    <button mat-raised-button color="primary" (click)="guardar()" [disabled]="isLoading">
-        {{ isEditMode ? 'Actualizar' : 'Registrar' }}
+
+    <button
+      mat-flat-button
+      color="primary"
+      type="button"
+      (click)="guardar()"
+      [disabled]="isLoading"
+      class="!h-10 !rounded-xl !px-5 !font-semibold !shadow-sm"
+    >
+      <mat-spinner diameter="18" *ngIf="isLoading" class="!mr-2 inline-block"></mat-spinner>
+      <span>{{ isEditMode ? 'Actualizar' : 'Registrar' }}</span>
     </button>
-</mat-dialog-actions>
+  </mat-dialog-actions>
+</div>

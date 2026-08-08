@@ -49,7 +49,6 @@ import { SucursalResponse } from '../../../../core/models/sucursal.model';
     MatAutocompleteModule,
   ],
   templateUrl: './vehiculo-list.component.html',
-  styleUrl: './vehiculo-list.component.scss',
 })
 export class VehiculoListComponent implements OnInit {
   private readonly vehiculoService = inject(VehiculoService);

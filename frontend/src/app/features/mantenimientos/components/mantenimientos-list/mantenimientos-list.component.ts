@@ -42,7 +42,6 @@ import { MantenimientoDialogComponent } from '../../../mantenimientos/components
     MatMenuModule,
   ],
   templateUrl: './mantenimientos-list.component.html',
-  styleUrl: './mantenimientos-list.component.scss',
 })
 export class MantenimientosListComponent implements OnInit {
   private readonly mantenimientoService = inject(MantenimientoService);

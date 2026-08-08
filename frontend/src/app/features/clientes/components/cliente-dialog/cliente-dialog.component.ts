@@ -38,7 +38,6 @@ export interface ClienteDialogData {
     MatSnackBarModule,
   ],
   templateUrl: './cliente-dialog.component.html',
-  styleUrl: './cliente-dialog.component.scss',
 })
 export class ClienteDialogComponent implements OnInit {
   private readonly fb = inject(FormBuilder);

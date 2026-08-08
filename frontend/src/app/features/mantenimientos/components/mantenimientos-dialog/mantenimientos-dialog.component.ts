@@ -45,7 +45,6 @@ export interface MantenimientoDialogData {
     MatSnackBarModule,
   ],
   templateUrl: './mantenimientos-dialog.component.html',
-  styleUrl: './mantenimientos-dialog.component.scss',
 })
 export class MantenimientoDialogComponent implements OnInit {
   private readonly fb = inject(FormBuilder);

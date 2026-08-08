@@ -38,7 +38,6 @@ import { SucursalDialogComponent } from '../sucursal-dialog/sucursal-dialog.comp
     MatSnackBarModule,
   ],
   templateUrl: './sucursal-list.component.html',
-  styleUrl: './sucursal-list.component.scss',
 })
 export class SucursalListComponent implements OnInit {
   private readonly sucursalService = inject(SucursalService);

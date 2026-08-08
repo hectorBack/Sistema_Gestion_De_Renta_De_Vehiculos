@@ -1,122 +1,239 @@
-<div class="container-sucursales">
-    <!-- Header con título y botón principal -->
-    <div class="header-action">
-        <div>
-            <h2>Gestión de Sucursales</h2>
-            <p class="subtitle">Administra los puntos físicos de atención y retiro/devolución de vehículos</p>
+<div class="max-w-[1320px] mx-auto p-4 sm:p-6 lg:p-8 font-sans relative">
+  <!-- Encabezado -->
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+    <div>
+      <h2 class="m-0 text-2xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight">
+        Gestión de Sucursales
+      </h2>
+      <p class="m-0 mt-1 text-sm font-medium text-slate-500 dark:text-slate-400">
+        Administra los puntos físicos de atención y retiro/devolución de vehículos.
+      </p>
+    </div>
+    <button
+      mat-flat-button
+      color="primary"
+      class="!rounded-xl !px-5 !py-2.5 !font-semibold !shadow-md shadow-blue-500/20"
+      (click)="abrirDialogoCrear()"
+    >
+      <mat-icon class="!mr-1">add</mat-icon>
+      <span>Nueva Sucursal</span>
+    </button>
+  </div>
+
+  <!-- Tarjeta de Filtros -->
+  <div
+    class="bg-white dark:bg-[#1e1e2d] border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm mb-6"
+  >
+    <form [formGroup]="filterForm" (ngSubmit)="aplicarFiltros()" class="flex flex-col gap-4">
+      <!-- Encabezado de Filtros -->
+      <div
+        class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80 pb-3"
+      >
+        <span class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+          Filtrar sucursales
+        </span>
+        <div class="flex items-center gap-2">
+          <button
+            mat-flat-button
+            color="primary"
+            type="submit"
+            class="!h-9 !rounded-lg !px-4 !text-xs !font-semibold"
+          >
+            <mat-icon class="!w-4 !h-4 !text-base !mr-1">filter_list</mat-icon>
+            <span>Aplicar Filtros</span>
+          </button>
+
+          <button
+            mat-button
+            type="button"
+            (click)="limpiarFiltros()"
+            class="!h-9 !rounded-lg !px-3 !text-xs !font-semibold !text-slate-500 hover:!bg-slate-100 dark:hover:!bg-slate-800"
+          >
+            <mat-icon class="!w-4 !h-4 !text-base !mr-1">clear</mat-icon>
+            <span>Limpiar</span>
+          </button>
         </div>
-        <button mat-raised-button color="primary" (click)="abrirDialogoCrear()">
-            <mat-icon>add</mat-icon>
-            Nueva Sucursal
-        </button>
+      </div>
+
+      <!-- Grid del Buscador -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="w-full">
+          <mat-form-field appearance="outline" class="w-full !m-0">
+            <mat-label>Buscar sucursal</mat-label>
+            <input matInput formControlName="nombre" placeholder="Nombre de la sucursal..." />
+            <mat-icon matSuffix class="!text-slate-400">search</mat-icon>
+          </mat-form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Tarjeta de Tabla -->
+  <div
+    class="relative bg-white dark:bg-[#1e1e2d] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden"
+  >
+    <!-- Spinner de Carga -->
+    <div
+      *ngIf="isLoading"
+      class="absolute inset-0 bg-white/75 dark:bg-[#1e1e2d]/80 backdrop-blur-sm z-20 flex items-center justify-center"
+    >
+      <mat-spinner diameter="44"></mat-spinner>
     </div>
 
-    <!-- Tarjeta de Filtros -->
-    <mat-card class="filter-card">
-        <mat-card-content>
-            <form [formGroup]="filterForm" (ngSubmit)="aplicarFiltros()" class="filter-form">
-                <!-- Búsqueda por Nombre -->
-                <mat-form-field appearance="outline">
-                    <mat-label>Buscar sucursal</mat-label>
-                    <input matInput formControlName="nombre" placeholder="Nombre de la sucursal..." />
-                    <mat-icon matSuffix>search</mat-icon>
-                </mat-form-field>
+    <div class="overflow-x-auto w-full">
+      <table mat-table [dataSource]="sucursales" class="w-full bg-transparent border-collapse">
+        <!-- ID Column -->
+        <ng-container matColumnDef="id">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            class="!bg-slate-50 dark:!bg-[#181824] !text-slate-500 dark:!text-slate-400 !font-bold !text-xs uppercase tracking-wider !px-5 !py-4"
+          >
+            ID
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let element"
+            class="!px-5 !py-3.5 text-slate-500 dark:text-slate-400 font-bold text-sm"
+          >
+            #{{ element.id }}
+          </td>
+        </ng-container>
 
-                <!-- Botones de Acción -->
-                <div class="filter-buttons">
-                    <button mat-raised-button color="primary" type="submit">
-                        <mat-icon>filter_list</mat-icon> Filtrar
-                    </button>
-                    <button mat-button type="button" (click)="limpiarFiltros()">
-                        <mat-icon>clear</mat-icon> Limpiar
-                    </button>
-                </div>
-            </form>
-        </mat-card-content>
-    </mat-card>
+        <!-- Nombre Column -->
+        <ng-container matColumnDef="nombre">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            class="!bg-slate-50 dark:!bg-[#181824] !text-slate-500 dark:!text-slate-400 !font-bold !text-xs uppercase tracking-wider !px-5 !py-4"
+          >
+            Sucursal
+          </th>
+          <td mat-cell *matCellDef="let element" class="!px-5 !py-3.5 text-sm">
+            <strong class="text-slate-900 dark:text-slate-100 font-bold">{{
+              element.nombre
+            }}</strong>
+          </td>
+        </ng-container>
 
-    <!-- Tarjeta de Tabla -->
-    <mat-card class="table-card">
-        <!-- Spinner de Carga -->
-        @if (isLoading) {
-        <div class="spinner-container">
-            <mat-spinner diameter="50"></mat-spinner>
-        </div>
-        }
+        <!-- Dirección Column -->
+        <ng-container matColumnDef="direccion">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            class="!bg-slate-50 dark:!bg-[#181824] !text-slate-500 dark:!text-slate-400 !font-bold !text-xs uppercase tracking-wider !px-5 !py-4"
+          >
+            Dirección
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let element"
+            class="!px-5 !py-3.5 text-sm text-slate-700 dark:text-slate-300"
+          >
+            {{ element.direccion }}
+          </td>
+        </ng-container>
 
-        <div class="table-responsive">
-            <table mat-table [dataSource]="sucursales" class="mat-elevation-z0">
-                <!-- ID Column -->
-                <ng-container matColumnDef="id">
-                    <th mat-header-cell *matHeaderCellDef> ID </th>
-                    <td mat-cell *matCellDef="let element"> #{{ element.id }} </td>
-                </ng-container>
+        <!-- Teléfono Column -->
+        <ng-container matColumnDef="telefono">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            class="!bg-slate-50 dark:!bg-[#181824] !text-slate-500 dark:!text-slate-400 !font-bold !text-xs uppercase tracking-wider !px-5 !py-4"
+          >
+            Teléfono
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let element"
+            class="!px-5 !py-3.5 font-mono text-xs text-slate-500 dark:text-slate-400"
+          >
+            {{ element.telefono || 'N/A' }}
+          </td>
+        </ng-container>
 
-                <!-- Nombre Column -->
-                <ng-container matColumnDef="nombre">
-                    <th mat-header-cell *matHeaderCellDef> Sucursal </th>
-                    <td mat-cell *matCellDef="let element">
-                        <strong>{{ element.nombre }}</strong>
-                    </td>
-                </ng-container>
+        <!-- Email Column -->
+        <ng-container matColumnDef="email">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            class="!bg-slate-50 dark:!bg-[#181824] !text-slate-500 dark:!text-slate-400 !font-bold !text-xs uppercase tracking-wider !px-5 !py-4"
+          >
+            Email
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let element"
+            class="!px-5 !py-3.5 text-sm text-slate-700 dark:text-slate-300"
+          >
+            {{ element.email || 'N/A' }}
+          </td>
+        </ng-container>
 
-                <!-- Dirección Column -->
-                <ng-container matColumnDef="direccion">
-                    <th mat-header-cell *matHeaderCellDef> Dirección </th>
-                    <td mat-cell *matCellDef="let element" class="text-muted">
-                        {{ element.direccion }}
-                    </td>
-                </ng-container>
+        <!-- Acciones Column -->
+        <ng-container matColumnDef="acciones">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            class="!bg-slate-50 dark:!bg-[#181824] !text-slate-500 dark:!text-slate-400 !font-bold !text-xs uppercase tracking-wider !px-5 !py-4 text-center"
+          >
+            Acciones
+          </th>
+          <td mat-cell *matCellDef="let element" class="!px-5 !py-3.5 text-center">
+            <div class="flex items-center justify-center gap-1">
+              <button
+                mat-icon-button
+                class="!text-blue-600 hover:!bg-blue-50 dark:hover:!bg-blue-500/10"
+                (click)="abrirDialogoEditar(element)"
+                matTooltip="Editar Sucursal"
+              >
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                class="!text-rose-600 hover:!bg-rose-50 dark:hover:!bg-rose-500/10"
+                (click)="eliminarSucursal(element)"
+                matTooltip="Eliminar Sucursal"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </td>
+        </ng-container>
 
-                <!-- Teléfono Column -->
-                <ng-container matColumnDef="telefono">
-                    <th mat-header-cell *matHeaderCellDef> Teléfono </th>
-                    <td mat-cell *matCellDef="let element">
-                        {{ element.telefono || 'N/A' }}
-                    </td>
-                </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr
+          mat-row
+          *matRowDef="let row; columns: displayedColumns"
+          class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+        ></tr>
 
-                <!-- Email Column -->
-                <ng-container matColumnDef="email">
-                    <th mat-header-cell *matHeaderCellDef> Email </th>
-                    <td mat-cell *matCellDef="let element" class="text-muted">
-                        {{ element.email || 'N/A' }}
-                    </td>
-                </ng-container>
+        <!-- Estado vacío -->
+        <tr class="mat-row" *matNoDataRow>
+          <td
+            class="!p-8 text-center text-slate-500 dark:text-slate-400 font-medium"
+            [attr.colspan]="displayedColumns.length"
+          >
+            No se encontraron sucursales registradas con los criterios seleccionados.
+          </td>
+        </tr>
+      </table>
+    </div>
 
-                <!-- Acciones Column -->
-                <ng-container matColumnDef="acciones">
-                    <th mat-header-cell *matHeaderCellDef class="text-center"> Acciones </th>
-                    <td mat-cell *matCellDef="let element" class="text-center">
-                        <!-- Botón Editar -->
-                        <button mat-icon-button color="primary" (click)="abrirDialogoEditar(element)"
-                            matTooltip="Editar Sucursal">
-                            <mat-icon>edit</mat-icon>
-                        </button>
-
-                        <!-- Botón Eliminar -->
-                        <button mat-icon-button color="warn" (click)="eliminarSucursal(element)"
-                            matTooltip="Eliminar Sucursal">
-                            <mat-icon>delete</mat-icon>
-                        </button>
-                    </td>
-                </ng-container>
-
-                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-
-                <!-- Estado vacío cuando no hay registros -->
-                <tr class="mat-row" *matNoDataRow>
-                    <td class="mat-cell empty-table" [attr.colspan]="displayedColumns.length">
-                        No se encontraron sucursales registradas o que coincidan con la búsqueda.
-                    </td>
-                </tr>
-            </table>
-        </div>
-
-        <!-- Paginador -->
-        <mat-paginator [length]="totalElements" [pageSize]="pageSize" [pageIndex]="pageIndex"
-            [pageSizeOptions]="[5, 10, 20, 50]" (page)="onPageChange($event)" showFirstLastButtons>
-        </mat-paginator>
-    </mat-card>
+    <!-- Footer de la tabla / Paginador -->
+    <div
+      class="px-4 py-2 bg-slate-50/50 dark:bg-[#181824]/50 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-end"
+    >
+      <mat-paginator
+        [length]="totalElements"
+        [pageSize]="pageSize"
+        [pageIndex]="pageIndex"
+        [pageSizeOptions]="[5, 10, 20, 50]"
+        (page)="onPageChange($event)"
+        showFirstLastButtons
+        class="!bg-transparent"
+      >
+      </mat-paginator>
+    </div>
+  </div>
 </div>

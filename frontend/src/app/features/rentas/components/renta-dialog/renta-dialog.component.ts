@@ -59,7 +59,6 @@ export interface RentaDialogData {
     MatAutocompleteModule,
   ],
   templateUrl: './renta-dialog.component.html',
-  styleUrl: './renta-dialog.component.scss',
 })
 export class RentaDialogComponent implements OnInit {
   private readonly fb = inject(FormBuilder);

@@ -55,7 +55,6 @@ function kilometrajeMinimoValidator(kmInicial: number): ValidatorFn {
     MatSnackBarModule,
   ],
   templateUrl: './devolucion-dialog.component.html',
-  styleUrl: './devolucion-dialog.component.scss',
 })
 export class DevolucionDialogComponent implements OnInit {
   private readonly fb = inject(FormBuilder);

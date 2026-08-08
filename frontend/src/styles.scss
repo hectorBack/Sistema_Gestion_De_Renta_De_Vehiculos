@@ -1,39 +1,346 @@
-// Include theming for Angular Material with `mat.theme()`.
-// This Sass mixin will define CSS variables that are used for styling Angular Material
-// components according to the Material 3 design spec.
-// Learn more about theming and how to use it for your application's
-// custom components at https://material.angular.dev/guide/theming
-@use '@angular/material' as mat;
+@import 'tailwindcss';
 
-html {
-  height: 100%;
-  @include mat.theme(
-    (
-      color: (
-        primary: mat.$azure-palette,
-        tertiary: mat.$blue-palette,
-      ),
-      typography: Roboto,
-      density: 0,
-    )
-  );
+@variant dark (&:where(.dark, .dark *));
+
+/* Corrección de overlay para mat-select y mat-autocomplete en Angular Material */
+.cdk-overlay-container {
+  z-index: 9999 !important;
 }
 
-body {
-  // Default the application to a light color theme. This can be changed to
-  // `dark` to enable the dark color theme, or to `light dark` to defer to the
-  // user's system settings.
-  color-scheme: light;
-
-  // Set a default background, font and text colors for the application using
-  // Angular Material's system-level CSS variables. Learn more about these
-  // variables at https://material.angular.dev/guide/system-variables
-  background-color: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
-  font: var(--mat-sys-body-medium);
-
-  // Reset the user agent margin.
-  margin: 0;
-  height: 100%;
+.mat-mdc-select-panel,
+.mat-mdc-autocomplete-panel {
+  background-color: #ffffff !important;
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 0.75rem !important;
 }
-/* You can add global styles to this file, and also import other style files */
+
+/* Opciones de los menús (Modo claro y oscuro) */
+.mat-mdc-option {
+  color: #334155 !important;
+
+  &:hover,
+  &.mdc-list-item--selected {
+    background-color: #f1f5f9 !important;
+  }
+}
+
+/* Modo oscuro general para Overlays y Modales */
+.dark {
+  .mat-mdc-select-panel,
+  .mat-mdc-autocomplete-panel {
+    background-color: #1e1e2d !important;
+    border-color: #334155 !important;
+    color: #f8fafc !important;
+  }
+
+  .mat-mdc-option {
+    color: #cbd5e1 !important; /* Slate-300 */
+
+    &:hover,
+    &.mdc-list-item--selected {
+      background-color: #2a2a3c !important;
+      color: #ffffff !important;
+    }
+  }
+}
+
+/* ==========================================================================
+   ESTILOS GENERALES Y MODO OSCURO PARA ANGULAR MATERIAL (MDC)
+   ========================================================================== */
+
+/* 1. Estilos Globales para Errores (Aplica en Modo Claro y Oscuro) */
+.mat-mdc-form-field-error,
+mat-error {
+  color: #ef4444 !important; /* Red-500 vistoso y legible */
+  font-weight: 600 !important;
+  font-size: 0.75rem !important;
+}
+
+/* Asterisco de campo requerido (*) */
+.mat-mdc-form-field-required-marker {
+  color: #f87171 !important; /* Red-400 */
+}
+
+/* 2. Reglas Específicas para MODO OSCURO (.dark) */
+.dark {
+  /* Diálogo base de Material */
+  .mat-mdc-dialog-container .mdc-dialog__surface {
+    background-color: #1e1e2d !important;
+    color: #f8fafc !important;
+  }
+
+  /* Etiquetas de los inputs (Mat-Label) cuando están inactivas o flotando */
+  .mat-mdc-form-field .mdc-floating-label,
+  .mat-mdc-form-field .mdc-floating-label--float-above {
+    color: #94a3b8 !important; /* Slate-400 */
+  }
+
+  /* Label cuando el campo tiene foco activo */
+  .mat-mdc-form-field.mdc-text-field--focused .mdc-floating-label {
+    color: #60a5fa !important; /* Blue-400 */
+  }
+
+  /* Texto ingresado dentro de los Inputs, Selects y Flechas */
+  .mat-mdc-input-element,
+  .mat-mdc-select-value,
+  .mat-mdc-select-value-text,
+  .mat-mdc-select-arrow {
+    color: #f8fafc !important; /* Slate-50 */
+  }
+
+  /* Placeholders dentro de Inputs */
+  .mat-mdc-input-element::placeholder {
+    color: #64748b !important; /* Slate-500 */
+  }
+
+  /* Bordes de los Form Fields (Outline neutro) */
+  .mdc-text-field--outlined .mdc-notched-outline__leading,
+  .mdc-text-field--outlined .mdc-notched-outline__notch,
+  .mdc-text-field--outlined .mdc-notched-outline__trailing {
+    border-color: #334155 !important; /* Slate-700 */
+  }
+
+  /* Estado Hover en Bordes */
+  .mdc-text-field--outlined:hover:not(.mdc-text-field--disabled) .mdc-notched-outline__leading,
+  .mdc-text-field--outlined:hover:not(.mdc-text-field--disabled) .mdc-notched-outline__notch,
+  .mdc-text-field--outlined:hover:not(.mdc-text-field--disabled) .mdc-notched-outline__trailing {
+    border-color: #475569 !important; /* Slate-600 */
+  }
+
+  /* Estado Focus en Bordes */
+  .mdc-text-field--outlined:not(.mdc-text-field--disabled).mdc-text-field--focused
+    .mdc-notched-outline__leading,
+  .mdc-text-field--outlined:not(.mdc-text-field--disabled).mdc-text-field--focused
+    .mdc-notched-outline__notch,
+  .mdc-text-field--outlined:not(.mdc-text-field--disabled).mdc-text-field--focused
+    .mdc-notched-outline__trailing {
+    border-color: #3b82f6 !important; /* Blue-500 */
+  }
+
+  /* Estado Inválido / Error en Bordes */
+  .mdc-text-field--invalid .mdc-notched-outline__leading,
+  .mdc-text-field--invalid .mdc-notched-outline__notch,
+  .mdc-text-field--invalid .mdc-notched-outline__trailing {
+    border-color: #ef4444 !important; /* Red-500 */
+  }
+
+  /* Errores con alto contraste e íconos */
+  .mat-mdc-form-field-error,
+  mat-error {
+    color: #f87171 !important; /* Red-400 resalta perfectamente en fondo oscuro */
+  }
+
+  /* Íconos sufijos/prefijos */
+  .mat-mdc-form-field-icon-prefix,
+  .mat-mdc-form-field-icon-suffix {
+    color: #94a3b8 !important;
+  }
+}
+
+/* ==========================================================================
+   ESTILOS GENERALES PARA MAT-MENU (MODO CLARO Y OSCURO)
+   ========================================================================== */
+
+/* Panel del menú en modo claro */
+.mat-mdc-menu-panel {
+  background-color: #ffffff !important;
+  border-radius: 0.75rem !important; /* 12px */
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+  border: 1px solid #e2e8f0 !important;
+  padding: 0.25rem !important;
+}
+
+/* Ítems del menú */
+.mat-mdc-menu-item {
+  min-height: 40px !important;
+  border-radius: 0.5rem !important;
+  margin-bottom: 2px;
+  color: #1e293b !important;
+
+  &:hover {
+    background-color: #f1f5f9 !important;
+  }
+
+  &[disabled] {
+    opacity: 0.5;
+  }
+}
+
+/* Panel del menú en modo oscuro */
+.dark {
+  .mat-mdc-menu-panel {
+    background-color: #1e1e2d !important;
+    border-color: #334155 !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  .mat-mdc-menu-item {
+    color: #f8fafc !important;
+
+    &:hover {
+      background-color: #2a2a3c !important;
+    }
+  }
+}
+
+/* ==========================================================================
+   ESTILOS PARA MAT-PAGINATOR (MODO CLARO Y OSCURO)
+   ========================================================================== */
+
+/* Contenedor principal del paginador */
+.mat-mdc-paginator {
+  background-color: transparent !important;
+  color: #64748b !important; /* Slate-500 */
+  font-family: inherit !important;
+  font-size: 0.8125rem !important; /* 13px */
+  border-top: 1px solid #f1f5f9;
+}
+
+/* Selector de tamaño de página (Select interno) */
+.mat-mdc-paginator-page-size-select {
+  margin: 0 4px !important;
+
+  .mat-mdc-select-trigger {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem; /* 8px */
+    padding: 2px 8px;
+  }
+}
+
+/* Botones de navegación (Flechas) */
+.mat-mdc-paginator-icon {
+  fill: #475569 !important; /* Slate-600 */
+}
+
+.mat-mdc-icon-button[disabled] .mat-mdc-paginator-icon {
+  fill: #cbd5e1 !important; /* Slate-300 */
+}
+
+/* Modificadores para MODO OSCURO */
+.dark {
+  .mat-mdc-paginator {
+    color: #94a3b8 !important; /* Slate-400 */
+    border-top-color: #2a2a3c !important;
+  }
+
+  .mat-mdc-paginator-page-size-select {
+    .mat-mdc-select-trigger {
+      background-color: #181824 !important;
+      border-color: #334155 !important;
+      color: #f8fafc !important;
+    }
+  }
+
+  .mat-mdc-paginator-icon {
+    fill: #cbd5e1 !important; /* Slate-300 */
+  }
+
+  .mat-mdc-icon-button[disabled] .mat-mdc-paginator-icon {
+    fill: #475569 !important; /* Slate-600 */
+  }
+
+  /* Botones redondos al pasar el cursor */
+  .mat-mdc-icon-button:hover:not([disabled]) {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+  }
+}
+
+/* ==========================================================================
+   ESTILOS GENERALES PARA MAT-DATEPICKER (MODO CLARO Y OSCURO)
+   ========================================================================== */
+
+/* Contenedor emergente del Datepicker */
+.mat-datepicker-content {
+  background-color: #ffffff !important;
+  border-radius: 1rem !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow:
+    0 10px 25px -5px rgba(0, 0, 0, 0.1),
+    0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Color del texto header y días de la semana */
+.mat-calendar-body-label,
+.mat-calendar-table-header th,
+.mat-calendar-body-cell-content {
+  color: #334155 !important;
+}
+
+/* Botones del header (Mes/Año, flechas) */
+.mat-calendar-period-button,
+.mat-calendar-previous-button,
+.mat-calendar-next-button {
+  color: #1e293b !important;
+}
+
+/* Día seleccionado */
+.mat-calendar-body-selected {
+  background-color: #3b82f6 !important; /* Blue-500 */
+  color: #ffffff !important;
+}
+
+/* Día actual (Hoy) */
+.mat-calendar-body-today:not(.mat-calendar-body-selected) {
+  border-color: #3b82f6 !important;
+}
+
+/* --- MODO OSCURO PARA DATEPICKER --- */
+.dark {
+  /* Contenedor en modo oscuro */
+  .mat-datepicker-content {
+    background-color: #1e1e2d !important;
+    border-color: #334155 !important;
+    color: #f8fafc !important;
+    box-shadow:
+      0 20px 25px -5px rgba(0, 0, 0, 0.5),
+      0 8px 10px -6px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  /* Encabezados y textos del calendario */
+  .mat-calendar-table-header,
+  .mat-calendar-table-header-divider::after {
+    color: #94a3b8 !important; /* Slate-400 */
+    background-color: #334155 !important;
+  }
+
+  .mat-calendar-body-label,
+  .mat-calendar-body-cell-content {
+    color: #cbd5e1 !important; /* Slate-300 */
+  }
+
+  /* Hover sobre los días */
+  .mat-calendar-body-cell:hover:not(.mat-calendar-body-disabled) .mat-calendar-body-cell-content {
+    background-color: #2a2a3c !important;
+    color: #ffffff !important;
+  }
+
+  /* Botones de navegación */
+  .mat-calendar-period-button,
+  .mat-calendar-previous-button,
+  .mat-calendar-next-button {
+    color: #f8fafc !important;
+  }
+
+  /* Día seleccionado en modo oscuro */
+  .mat-calendar-body-selected {
+    background-color: #3b82f6 !important;
+    color: #ffffff !important;
+  }
+
+  /* Día actual en modo oscuro */
+  .mat-calendar-body-today:not(.mat-calendar-body-selected) {
+    border-color: #60a5fa !important; /* Blue-400 */
+  }
+
+  /* Ícono del Datepicker Toggle en los inputs */
+  .mat-datepicker-toggle-active,
+  .mat-datepicker-toggle {
+    color: #94a3b8 !important;
+  }
+}

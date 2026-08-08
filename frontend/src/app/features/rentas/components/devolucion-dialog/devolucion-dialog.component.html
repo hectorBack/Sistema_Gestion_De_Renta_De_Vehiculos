@@ -1,74 +1,155 @@
-<div class="dialog-title">
-    <h2 mat-dialog-title>Procesar Devolución</h2>
-    <button mat-icon-button class="close-button" (click)="cancelar()" [disabled]="isLoading">
-        <mat-icon>close</mat-icon>
-    </button>
-</div>
+<div
+  class="p-2 max-w-[600px] w-full font-sans bg-white dark:bg-[#1e1e2d] text-slate-900 dark:text-slate-100"
+>
+  <!-- Título del Diálogo -->
+  <div
+    class="flex items-center justify-between pb-4 mb-2 border-b border-slate-100 dark:border-slate-800"
+  >
+    <h2
+      mat-dialog-title
+      class="!flex !items-center !gap-2.5 !m-0 !p-0 !text-lg !font-extrabold !text-slate-900 dark:!text-slate-100 tracking-tight"
+    >
+      <div
+        class="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center"
+      >
+        <mat-icon class="!w-5 !h-5 !text-xl">assignment_turned_in</mat-icon>
+      </div>
+      <span class="text-slate-900 dark:text-slate-100">Procesar Devolución</span>
+    </h2>
 
-<mat-dialog-content>
+    <button
+      mat-icon-button
+      (click)="cancelar()"
+      [disabled]="isLoading"
+      class="!text-slate-400 hover:!text-slate-600 dark:hover:!text-slate-200"
+    >
+      <mat-icon class="!w-5 !h-5 !text-xl">close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Contenido del Formulario -->
+  <mat-dialog-content class="!py-4 !px-1 !m-0 max-h-[75vh]">
     @if (isLoading) {
-    <div class="loading-container">
-        <mat-spinner diameter="40"></mat-spinner>
-        <p>Procesando devolución...</p>
-    </div>
+      <div class="flex flex-col items-center justify-center py-8 gap-3">
+        <mat-spinner diameter="36"></mat-spinner>
+        <p class="text-sm font-medium text-slate-500 dark:text-slate-400">
+          Procesando devolución...
+        </p>
+      </div>
     } @else {
-    <!-- Resumen informativo de la renta -->
-    <div class="renta-summary">
-        <div class="summary-item">
-            <span class="label">Vehículo:</span>
-            <span class="value">{{ data.renta.vehiculoDetalle }}</span>
+      <!-- Resumen Informativo de la Renta -->
+      <div
+        class="bg-slate-50 dark:bg-[#181824] border border-slate-200/80 dark:border-slate-800 rounded-xl p-4 mb-4 grid grid-cols-1 sm:grid-cols-3 gap-3"
+      >
+        <div>
+          <span
+            class="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block"
+            >Vehículo</span
+          >
+          <span class="text-sm font-bold text-slate-900 dark:text-slate-100 truncate block">{{
+            data.renta.vehiculoDetalle
+          }}</span>
         </div>
-        <div class="summary-item">
-            <span class="label">Cliente:</span>
-            <span class="value">{{ data.renta.clienteNombre }}</span>
+        <div>
+          <span
+            class="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block"
+            >Cliente</span
+          >
+          <span class="text-sm font-medium text-slate-700 dark:text-slate-300 truncate block">{{
+            data.renta.clienteNombre
+          }}</span>
         </div>
-        <div class="summary-item">
-            <span class="label">Km Inicial:</span>
-            <span class="value font-mono">{{ data.renta.kilometrajeInicial }} km</span>
+        <div>
+          <span
+            class="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block"
+            >Km Inicial</span
+          >
+          <span class="text-sm font-bold font-mono text-slate-900 dark:text-slate-100 block"
+            >{{ data.renta.kilometrajeInicial }} km</span
+          >
         </div>
-    </div>
+      </div>
 
-    <form [formGroup]="devolucionForm" class="dialog-form">
+      <form [formGroup]="devolucionForm" class="flex flex-col gap-3">
         <!-- Fila: Fecha y Kilometraje Final -->
-        <div class="form-row">
-            <mat-form-field appearance="outline">
-                <mat-label>Fecha Devolución Real</mat-label>
-                <input matInput [matDatepicker]="pickerDevolucion" formControlName="fechaDevolucionReal"
-                    placeholder="Selecciona fecha" />
-                <mat-datepicker-toggle matSuffix [for]="pickerDevolucion"></mat-datepicker-toggle>
-                <mat-datepicker #pickerDevolucion></mat-datepicker>
-                @if (devolucionForm.get('fechaDevolucionReal')?.hasError('required')) {
-                <mat-error>La fecha es obligatoria</mat-error>
-                }
-            </mat-form-field>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="w-full">
+            <mat-label>Fecha Devolución Real</mat-label>
+            <input
+              matInput
+              [matDatepicker]="pickerDevolucion"
+              formControlName="fechaDevolucionReal"
+              placeholder="Selecciona fecha"
+            />
+            <mat-datepicker-toggle matSuffix [for]="pickerDevolucion"></mat-datepicker-toggle>
+            <mat-datepicker #pickerDevolucion></mat-datepicker>
+            <mat-error
+              *ngIf="devolucionForm.get('fechaDevolucionReal')?.hasError('required')"
+              class="!text-red-500 dark:!text-red-400 !font-semibold"
+            >
+              La fecha es obligatoria.
+            </mat-error>
+          </mat-form-field>
 
-            <mat-form-field appearance="outline">
-                <mat-label>Kilometraje Final</mat-label>
-                <input matInput type="number" formControlName="kilometrajeFinal" placeholder="Ej. 15450" />
-                <mat-icon matSuffix>speed</mat-icon>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="w-full">
+            <mat-label>Kilometraje Final</mat-label>
+            <input
+              matInput
+              type="number"
+              formControlName="kilometrajeFinal"
+              placeholder="Ej. 15450"
+            />
+            <mat-icon matSuffix class="!text-slate-400">speed</mat-icon>
 
-                @if (devolucionForm.get('kilometrajeFinal')?.hasError('required')) {
-                <mat-error>El kilometraje final es obligatorio</mat-error>
-                }
-                @if (devolucionForm.get('kilometrajeFinal')?.hasError('min')) {
-                <mat-error>No puede ser menor a 0</mat-error>
-                }
-                @if (devolucionForm.get('kilometrajeFinal')?.hasError('kilometrajeMenor')) {
-                <mat-error>
-                    No puede ser menor al inicial ({{ data.renta.kilometrajeInicial }} km)
-                </mat-error>
-                }
-            </mat-form-field>
+            <mat-error
+              *ngIf="devolucionForm.get('kilometrajeFinal')?.hasError('required')"
+              class="!text-red-500 dark:!text-red-400 !font-semibold"
+            >
+              El kilometraje final es obligatorio.
+            </mat-error>
+            <mat-error
+              *ngIf="devolucionForm.get('kilometrajeFinal')?.hasError('min')"
+              class="!text-red-500 dark:!text-red-400 !font-semibold"
+            >
+              No puede ser menor a 0.
+            </mat-error>
+            <mat-error
+              *ngIf="devolucionForm.get('kilometrajeFinal')?.hasError('kilometrajeMenor')"
+              class="!text-red-500 dark:!text-red-400 !font-semibold"
+            >
+              No puede ser menor al inicial ({{ data.renta.kilometrajeInicial }} km).
+            </mat-error>
+          </mat-form-field>
         </div>
-    </form>
+      </form>
     }
-</mat-dialog-content>
+  </mat-dialog-content>
 
-<mat-dialog-actions align="end">
-    <button mat-button (click)="cancelar()" [disabled]="isLoading">
-        Cancelar
+  <!-- Acciones del Diálogo -->
+  <mat-dialog-actions
+    align="end"
+    class="!flex !items-center !justify-end !gap-3 !pt-4 !pb-1 !m-0 border-t border-slate-100 dark:border-slate-800"
+  >
+    <button
+      mat-button
+      type="button"
+      (click)="cancelar()"
+      [disabled]="isLoading"
+      class="!h-10 !rounded-xl !px-4 !font-semibold !text-slate-600 dark:!text-slate-300 hover:!bg-slate-100 dark:hover:!bg-slate-800"
+    >
+      Cancelar
     </button>
-    <button mat-raised-button color="primary" (click)="guardar()" [disabled]="isLoading">
-        Completar Devolución
+
+    <button
+      mat-flat-button
+      color="primary"
+      type="button"
+      (click)="guardar()"
+      [disabled]="isLoading"
+      class="!h-10 !rounded-xl !px-5 !font-semibold !shadow-sm"
+    >
+      <mat-spinner diameter="18" *ngIf="isLoading" class="!mr-2 inline-block"></mat-spinner>
+      <span>Completar Devolución</span>
     </button>
-</mat-dialog-actions>
+  </mat-dialog-actions>
+</div>

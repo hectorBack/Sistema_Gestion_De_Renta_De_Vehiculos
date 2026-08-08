@@ -32,7 +32,6 @@ import { DashboardMetrics } from '../../../core/models/dashboard.model';
     MatSnackBarModule,
   ],
   templateUrl: './dashboard-list.component.html',
-  styleUrl: './dashboard-list.component.scss',
 })
 export class DashboardListComponent implements OnInit {
   private readonly dashboardService = inject(DashboardService);

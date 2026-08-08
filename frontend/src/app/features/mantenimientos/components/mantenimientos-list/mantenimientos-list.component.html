@@ -1,177 +1,354 @@
-<div class="container-mantenimientos">
-    <!-- Header con título y botón principal -->
-    <div class="header-action">
-        <div>
-            <h2>Gestión de Mantenimientos</h2>
-            <p class="subtitle">Consulta, registra y administra los mantenimientos preventivos y correctivos de la flota
-            </p>
+<div class="max-w-[1320px] mx-auto p-4 sm:p-6 lg:p-8 font-sans relative">
+  <!-- Encabezado -->
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+    <div>
+      <h2 class="m-0 text-2xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight">
+        Gestión de Mantenimientos
+      </h2>
+      <p class="m-0 mt-1 text-sm font-medium text-slate-500 dark:text-slate-400">
+        Consulta, registra y administra los mantenimientos preventivos y correctivos de la flota.
+      </p>
+    </div>
+    <button
+      mat-flat-button
+      color="primary"
+      class="!rounded-xl !px-5 !py-2.5 !font-semibold !shadow-md shadow-blue-500/20"
+      (click)="abrirDialogoCrear()"
+    >
+      <mat-icon class="!mr-1">add</mat-icon>
+      <span>Nuevo Mantenimiento</span>
+    </button>
+  </div>
+
+  <!-- Tarjeta de Filtros -->
+  <div
+    class="bg-white dark:bg-[#1e1e2d] border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm mb-6"
+  >
+    <form [formGroup]="filterForm" (ngSubmit)="aplicarFiltros()" class="flex flex-col gap-4">
+      <!-- Encabezado sutil para filtros -->
+      <div
+        class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80 pb-3"
+      >
+        <span class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+          Filtrar mantenimientos
+        </span>
+        <div class="flex items-center gap-2">
+          <button
+            mat-flat-button
+            color="primary"
+            type="submit"
+            class="!h-9 !rounded-lg !px-4 !text-xs !font-semibold"
+          >
+            <mat-icon class="!w-4 !h-4 !text-base !mr-1">filter_list</mat-icon>
+            <span>Aplicar Filtros</span>
+          </button>
+
+          <button
+            mat-button
+            type="button"
+            (click)="limpiarFiltros()"
+            class="!h-9 !rounded-lg !px-3 !text-xs !font-semibold !text-slate-500 hover:!bg-slate-100 dark:hover:!bg-slate-800"
+          >
+            <mat-icon class="!w-4 !h-4 !text-base !mr-1">clear</mat-icon>
+            <span>Limpiar</span>
+          </button>
         </div>
-        <button mat-raised-button color="primary" (click)="abrirDialogoCrear()">
-            <mat-icon>add</mat-icon>
-            Nuevo Mantenimiento
-        </button>
+      </div>
+
+      <!-- Inputs en Grid responsivo -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Búsqueda General (Término) -->
+        <div class="w-full">
+          <mat-form-field appearance="outline" class="w-full !m-0">
+            <mat-label>Buscar mantenimiento</mat-label>
+            <input
+              matInput
+              formControlName="termino"
+              placeholder="Tipo, descripción o placa del vehículo..."
+            />
+            <mat-icon matSuffix class="!text-slate-400">search</mat-icon>
+          </mat-form-field>
+        </div>
+
+        <!-- Filtro por Estado -->
+        <div class="w-full">
+          <mat-form-field appearance="outline" class="w-full !m-0">
+            <mat-label>Estado</mat-label>
+            <mat-select formControlName="activo">
+              @for (est of estadosList; track est.label) {
+                <mat-option [value]="est.value">{{ est.label }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Tarjeta de Tabla -->
+  <div
+    class="relative bg-white dark:bg-[#1e1e2d] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden"
+  >
+    <!-- Spinner de Carga -->
+    <div
+      *ngIf="isLoading"
+      class="absolute inset-0 bg-white/75 dark:bg-[#1e1e2d]/80 backdrop-blur-sm z-20 flex items-center justify-center"
+    >
+      <mat-spinner diameter="44"></mat-spinner>
     </div>
 
-    <!-- Tarjeta de Filtros -->
-    <mat-card class="filter-card">
-        <mat-card-content>
-            <form [formGroup]="filterForm" (ngSubmit)="aplicarFiltros()" class="filter-form">
-                <!-- Búsqueda General (Término) -->
-                <mat-form-field appearance="outline">
-                    <mat-label>Buscar mantenimiento</mat-label>
-                    <input matInput formControlName="termino" placeholder="Tipo, descripción o placa del vehículo..." />
-                    <mat-icon matSuffix>search</mat-icon>
-                </mat-form-field>
+    <div class="overflow-x-auto w-full">
+      <table mat-table [dataSource]="mantenimientos" class="w-full bg-transparent border-collapse">
+        <!-- ID Column -->
+        <ng-container matColumnDef="id">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            class="!bg-slate-50 dark:!bg-[#181824] !text-slate-500 dark:!text-slate-400 !font-bold !text-xs uppercase tracking-wider !px-5 !py-4"
+          >
+            ID
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let element"
+            class="!px-5 !py-3.5 text-slate-500 dark:text-slate-400 font-bold text-sm"
+          >
+            #{{ element.id }}
+          </td>
+        </ng-container>
 
-                <!-- Filtro por Estado -->
-                <mat-form-field appearance="outline">
-                    <mat-label>Estado</mat-label>
-                    <mat-select formControlName="activo">
-                        @for (est of estadosList; track est.label) {
-                        <mat-option [value]="est.value">{{ est.label }}</mat-option>
-                        }
-                    </mat-select>
-                </mat-form-field>
+        <!-- Vehículo Info Column -->
+        <ng-container matColumnDef="vehiculoModeloInfo">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            class="!bg-slate-50 dark:!bg-[#181824] !text-slate-500 dark:!text-slate-400 !font-bold !text-xs uppercase tracking-wider !px-5 !py-4"
+          >
+            Vehículo
+          </th>
+          <td mat-cell *matCellDef="let element" class="!px-5 !py-3.5 text-sm">
+            <strong class="text-slate-900 dark:text-slate-100 font-bold">{{
+              element.vehiculoModeloInfo
+            }}</strong>
+          </td>
+        </ng-container>
 
-                <!-- Botones de Acción -->
-                <div class="filter-buttons">
-                    <button mat-raised-button color="primary" type="submit">
-                        <mat-icon>filter_list</mat-icon> Filtrar
-                    </button>
-                    <button mat-button type="button" (click)="limpiarFiltros()">
-                        <mat-icon>clear</mat-icon> Limpiar
-                    </button>
-                </div>
-            </form>
-        </mat-card-content>
-    </mat-card>
+        <!-- Placa Column -->
+        <ng-container matColumnDef="placaVehiculo">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            class="!bg-slate-50 dark:!bg-[#181824] !text-slate-500 dark:!text-slate-400 !font-bold !text-xs uppercase tracking-wider !px-5 !py-4"
+          >
+            Placa
+          </th>
+          <td mat-cell *matCellDef="let element" class="!px-5 !py-3.5">
+            <span
+              class="inline-block bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md px-2 py-0.5 font-mono font-bold text-xs text-slate-900 dark:text-slate-100 tracking-wider"
+            >
+              {{ element.placaVehiculo }}
+            </span>
+          </td>
+        </ng-container>
 
-    <!-- Tarjeta de Tabla -->
-    <mat-card class="table-card">
-        <!-- Spinner de Carga -->
-        @if (isLoading) {
-        <div class="spinner-container">
-            <mat-spinner diameter="50"></mat-spinner>
-        </div>
-        }
+        <!-- Tipo Mantenimiento Column -->
+        <ng-container matColumnDef="tipo">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            class="!bg-slate-50 dark:!bg-[#181824] !text-slate-500 dark:!text-slate-400 !font-bold !text-xs uppercase tracking-wider !px-5 !py-4"
+          >
+            Tipo
+          </th>
+          <td mat-cell *matCellDef="let element" class="!px-5 !py-3.5">
+            <span
+              class="inline-block bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-full px-2.5 py-1 text-xs font-semibold text-slate-600 dark:text-slate-300"
+            >
+              {{ element.tipo }}
+            </span>
+          </td>
+        </ng-container>
 
-        <div class="table-responsive">
-            <table mat-table [dataSource]="mantenimientos" class="mat-elevation-z0">
-                <!-- ID Column -->
-                <ng-container matColumnDef="id">
-                    <th mat-header-cell *matHeaderCellDef> ID </th>
-                    <td mat-cell *matCellDef="let element"> #{{ element.id }} </td>
-                </ng-container>
+        <!-- Costo Column -->
+        <ng-container matColumnDef="costo">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            class="!bg-slate-50 dark:!bg-[#181824] !text-slate-500 dark:!text-slate-400 !font-bold !text-xs uppercase tracking-wider !px-5 !py-4"
+          >
+            Costo
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let element"
+            class="!px-5 !py-3.5 text-sm font-semibold text-slate-900 dark:text-slate-100 whitespace-nowrap"
+          >
+            {{ element.costo | currency: 'USD' : 'symbol' : '1.2-2' }}
+          </td>
+        </ng-container>
 
-                <!-- Vehículo Info Column -->
-                <ng-container matColumnDef="vehiculoModeloInfo">
-                    <th mat-header-cell *matHeaderCellDef> Vehículo </th>
-                    <td mat-cell *matCellDef="let element">
-                        <strong>{{ element.vehiculoModeloInfo }}</strong>
-                    </td>
-                </ng-container>
+        <!-- Fecha Mantenimiento Column -->
+        <ng-container matColumnDef="fechaMantenimiento">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            class="!bg-slate-50 dark:!bg-[#181824] !text-slate-500 dark:!text-slate-400 !font-bold !text-xs uppercase tracking-wider !px-5 !py-4"
+          >
+            Fecha
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let element"
+            class="!px-5 !py-3.5 text-sm text-slate-700 dark:text-slate-300 whitespace-nowrap"
+          >
+            {{ element.fechaMantenimiento | date: 'dd/MM/yyyy' }}
+          </td>
+        </ng-container>
 
-                <!-- Placa Column -->
-                <ng-container matColumnDef="placaVehiculo">
-                    <th mat-header-cell *matHeaderCellDef> Placa </th>
-                    <td mat-cell *matCellDef="let element">
-                        <span class="placa-badge">{{ element.placaVehiculo }}</span>
-                    </td>
-                </ng-container>
+        <!-- Descripción Column -->
+        <ng-container matColumnDef="descripcion">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            class="!bg-slate-50 dark:!bg-[#181824] !text-slate-500 dark:!text-slate-400 !font-bold !text-xs uppercase tracking-wider !px-5 !py-4"
+          >
+            Descripción
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let element"
+            class="!px-5 !py-3.5 text-sm text-slate-500 dark:text-slate-400 max-w-xs truncate"
+            [matTooltip]="element.descripcion"
+          >
+            {{ element.descripcion || 'Sin descripción' }}
+          </td>
+        </ng-container>
 
-                <!-- Tipo Mantenimiento Column -->
-                <ng-container matColumnDef="tipo">
-                    <th mat-header-cell *matHeaderCellDef> Tipo </th>
-                    <td mat-cell *matCellDef="let element">
-                        {{ element.tipo }}
-                    </td>
-                </ng-container>
+        <!-- Estado Column -->
+        <ng-container matColumnDef="activo">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            class="!bg-slate-50 dark:!bg-[#181824] !text-slate-500 dark:!text-slate-400 !font-bold !text-xs uppercase tracking-wider !px-5 !py-4 text-center"
+          >
+            Estado
+          </th>
+          <td mat-cell *matCellDef="let element" class="!px-5 !py-3.5 text-center">
+            <span
+              class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider border"
+              [ngClass]="
+                element.activo
+                  ? 'bg-green-50 text-green-600 border-green-200 dark:bg-green-500/10 dark:text-green-400 dark:border-green-500/20'
+                  : 'bg-red-50 text-red-600 border-red-200 dark:bg-red-500/10 dark:text-red-400 dark:border-red-500/20'
+              "
+            >
+              <span
+                class="w-1.5 h-1.5 rounded-full"
+                [ngClass]="
+                  element.activo ? 'bg-green-600 dark:bg-green-400' : 'bg-red-600 dark:bg-red-400'
+                "
+              ></span>
+              {{ element.activo ? 'ACTIVO' : 'INACTIVO' }}
+            </span>
+          </td>
+        </ng-container>
 
-                <!-- Costo Column -->
-                <ng-container matColumnDef="costo">
-                    <th mat-header-cell *matHeaderCellDef> Costo </th>
-                    <td mat-cell *matCellDef="let element" class="costo-badge">
-                        {{ element.costo | currency:'USD':'symbol':'1.2-2' }}
-                    </td>
-                </ng-container>
+        <!-- Acciones Column -->
+        <ng-container matColumnDef="acciones">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            class="!bg-slate-50 dark:!bg-[#181824] !text-slate-500 dark:!text-slate-400 !font-bold !text-xs uppercase tracking-wider !px-5 !py-4 text-center"
+          >
+            Acciones
+          </th>
+          <td mat-cell *matCellDef="let element" class="!px-5 !py-3.5 text-center">
+            <div class="flex items-center justify-center gap-1">
+              <!-- Botón Editar -->
+              <button
+                mat-icon-button
+                class="!text-blue-600 hover:!bg-blue-50 dark:hover:!bg-blue-500/10"
+                (click)="abrirDialogoEditar(element)"
+                matTooltip="Editar Mantenimiento"
+              >
+                <mat-icon>edit</mat-icon>
+              </button>
 
-                <!-- Fecha Mantenimiento Column -->
-                <ng-container matColumnDef="fechaMantenimiento">
-                    <th mat-header-cell *matHeaderCellDef> Fecha </th>
-                    <td mat-cell *matCellDef="let element">
-                        {{ element.fechaMantenimiento | date: 'dd/MM/yyyy' }}
-                    </td>
-                </ng-container>
+              <!-- Botón Eliminar / Borrado Lógico -->
+              <button
+                mat-icon-button
+                class="!text-red-600 hover:!bg-red-50 dark:hover:!bg-red-500/10"
+                (click)="eliminarMantenimiento(element)"
+                matTooltip="Eliminar Mantenimiento"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
 
-                <!-- Descripción Column -->
-                <ng-container matColumnDef="descripcion">
-                    <th mat-header-cell *matHeaderCellDef> Descripción </th>
-                    <td mat-cell *matCellDef="let element" class="text-muted">
-                        {{ element.descripcion || 'Sin descripción' }}
-                    </td>
-                </ng-container>
+              <!-- Botón Cambiar Estado con Menú -->
+              <button
+                mat-icon-button
+                class="!text-sky-600 hover:!bg-sky-50 dark:hover:!bg-sky-500/10"
+                [matMenuTriggerFor]="estadoMenu"
+                matTooltip="Cambiar Estado"
+              >
+                <mat-icon>sync_alt</mat-icon>
+              </button>
+            </div>
 
-                <!-- Estado Column -->
-                <ng-container matColumnDef="activo">
-                    <th mat-header-cell *matHeaderCellDef class="text-center"> Estado </th>
-                    <td mat-cell *matCellDef="let element" class="text-center">
-                        <span class="badge" [ngClass]="element.activo ? 'badge-activo' : 'badge-inactivo'">
-                            {{ element.activo ? 'ACTIVO' : 'INACTIVO' }}
-                        </span>
-                    </td>
-                </ng-container>
+            <!-- Menú Opciones de Estado -->
+            <mat-menu #estadoMenu="matMenu">
+              <button
+                mat-menu-item
+                (click)="cambiarEstado(element, true)"
+                [disabled]="element.activo === true"
+              >
+                <span class="text-green-600 dark:text-green-400 font-semibold">Activar</span>
+              </button>
+              <button
+                mat-menu-item
+                (click)="cambiarEstado(element, false)"
+                [disabled]="element.activo === false"
+              >
+                <span class="text-red-600 dark:text-red-400 font-semibold">Inhabilitar</span>
+              </button>
+            </mat-menu>
+          </td>
+        </ng-container>
 
-                <!-- Acciones Column -->
-                <ng-container matColumnDef="acciones">
-                    <th mat-header-cell *matHeaderCellDef class="text-center"> Acciones </th>
-                    <td mat-cell *matCellDef="let element" class="text-center">
-                        <!-- Botón Editar -->
-                        <button mat-icon-button color="primary" (click)="abrirDialogoEditar(element)"
-                            matTooltip="Editar Mantenimiento">
-                            <mat-icon>edit</mat-icon>
-                        </button>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr
+          mat-row
+          *matRowDef="let row; columns: displayedColumns"
+          class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+        ></tr>
 
-                        <!-- Botón Eliminar / Borrado Lógico -->
-                        <button mat-icon-button color="warn" (click)="eliminarMantenimiento(element)"
-                            matTooltip="Eliminar Mantenimiento">
-                            <mat-icon>delete</mat-icon>
-                        </button>
+        <!-- Estado vacío cuando no hay registros -->
+        <tr class="mat-row" *matNoDataRow>
+          <td
+            class="!p-8 text-center text-slate-500 dark:text-slate-400 font-medium"
+            [attr.colspan]="displayedColumns.length"
+          >
+            No se encontraron registros de mantenimiento que coincidan con los criterios
+            seleccionados.
+          </td>
+        </tr>
+      </table>
+    </div>
 
-                        <!-- Botón Cambiar Estado con Menú -->
-                        <button mat-icon-button color="accent" [matMenuTriggerFor]="estadoMenu"
-                            matTooltip="Cambiar Estado">
-                            <mat-icon>sync_alt</mat-icon>
-                        </button>
-
-                        <!-- Menú Opciones de Estado -->
-                        <mat-menu #estadoMenu="matMenu">
-                            <button mat-menu-item (click)="cambiarEstado(element, true)"
-                                [disabled]="element.activo === true">
-                                <span class="badge badge-activo">Activar</span>
-                            </button>
-                            <button mat-menu-item (click)="cambiarEstado(element, false)"
-                                [disabled]="element.activo === false">
-                                <span class="badge badge-inactivo">Inhabilitar</span>
-                            </button>
-                        </mat-menu>
-                    </td>
-                </ng-container>
-
-                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-
-                <!-- Estado vacío cuando no hay registros -->
-                <tr class="mat-row" *matNoDataRow>
-                    <td class="mat-cell empty-table" [attr.colspan]="displayedColumns.length">
-                        No se encontraron registros de mantenimiento que coincidan con la búsqueda.
-                    </td>
-                </tr>
-            </table>
-        </div>
-
-        <!-- Paginador -->
-        <mat-paginator [length]="totalElements" [pageSize]="pageSize" [pageIndex]="pageIndex"
-            [pageSizeOptions]="[5, 10, 20, 50]" (page)="onPageChange($event)" showFirstLastButtons>
-        </mat-paginator>
-    </mat-card>
+    <!-- Footer de la tabla / Paginador -->
+    <div
+      class="px-4 py-2 bg-slate-50/50 dark:bg-[#181824]/50 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-end"
+    >
+      <mat-paginator
+        [length]="totalElements"
+        [pageSize]="pageSize"
+        [pageIndex]="pageIndex"
+        [pageSizeOptions]="[5, 10, 20, 50]"
+        (page)="onPageChange($event)"
+        showFirstLastButtons
+        class="!bg-transparent"
+      >
+      </mat-paginator>
+    </div>
+  </div>
 </div>

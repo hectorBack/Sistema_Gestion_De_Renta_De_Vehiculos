@@ -42,7 +42,6 @@ import { CategoriaDialogComponent } from '../categorias-dialog/categorias-dialog
     MatMenuModule,
   ],
   templateUrl: './categorias-list.component.html',
-  styleUrl: './categorias-list.component.scss',
 })
 export class CategoriasListComponent implements OnInit {
   private readonly categoriaService = inject(CategoriaService);

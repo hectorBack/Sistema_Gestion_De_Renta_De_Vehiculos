@@ -57,7 +57,6 @@ import { DevolucionDialogComponent } from '../devolucion-dialog/devolucion-dialo
     MatDatepickerModule,
   ],
   templateUrl: './renta-list.component.html',
-  styleUrl: './renta-list.component.scss',
 })
 export class RentaListComponent implements OnInit {
   private readonly rentaService = inject(RentaService);
